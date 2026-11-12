@@ -1,6 +1,6 @@
 ---
-name: code-review
-description: "Review a change along two separate axes: Standards (does it follow the project's conventions and language rules?) and Spec (does it do what was agreed?). Runs both in fresh parallel sub-agents and reports them side by side. Use when a change is done and before handing it off, or when the user asks for a review."
+name: review-standard
+description: "Review a change along two separate axes: Standards (does it follow the project's conventions and language rules?) and Spec (does it do what was agreed?). Runs both in fresh parallel sub-agents and reports them side by side. Use when reviewing a PR or branch before it merges."
 ---
 
 Two-axis review of a change:
@@ -14,15 +14,13 @@ Both axes run as **parallel sub-agents**, each with a fresh context window, so n
 
 ### 1. Pin the diff
 
-Review the uncommitted changes plus any commits made for this work. If the starting point isn't obvious, use the commit the work started from. Confirm the diff is non-empty before going further.
+Review the PR or branch against its base: `git diff <base>...HEAD` (three-dot, so the comparison is against the merge-base), and `gh pr diff <number>` for a PR. If the user names another fixed point, use that. Confirm the diff is non-empty before going further.
+
+When the caller asks to review an area of the codebase rather than a change, review those files as they stand instead of a diff.
 
 ### 2. Collect the spec
 
-The acceptance criteria, quoted verbatim, from whichever source the work came from:
-
-1. An agreement from `/receiver`
-2. A violation list from `/architecture`
-3. The reproduction from `hunt`: it must now pass, and nothing else may break
+The acceptance criteria, quoted verbatim, from the PR description's `## Acceptance criteria` (the format in the `docs-spec` skill) and its linked issues, or from a spec the user points to. Use the PR's `## Out of scope` to tell scope creep from deliberate omissions.
 
 If there's none, the **Spec** sub-agent skips and reports "no spec available".
 
@@ -64,11 +62,7 @@ Issue both calls together and wait for both reports.
 
 Present the two reports under `## Standards` and `## Spec`, lightly cleaned. Do **not** merge or rerank across the axes. End with one line: findings per axis, and the worst issue within each.
 
-## After the review
-
-- **Hard findings** go back to whoever wrote the code: fix them and review again.
-- **Gaps** and conventions that look stale go to the user: tell them to run `/architecture`.
-- If the same finding survives two rounds, stop fixing. The problem is in the agreement or the conventions: tell the user to run `/receiver` or `/architecture`.
+Findings are a report, not a fix: don't change the code. Post them to the PR only when the user asks.
 
 ## Why two axes
 

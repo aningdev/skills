@@ -1,6 +1,6 @@
 ---
 name: docs-spec
-description: Build and sharpen a project's domain model and architecture conventions. Use when discussing codebase terminology, tech choices, contexts, directory layout, layering, or seams, or when writing or editing a GLOSSARY.md or ARCHITECTURE.md.
+description: Build and sharpen a project's domain model and architecture conventions. Use when discussing codebase terminology, tech choices, contexts, directory layout, layering, or seams, or when writing or editing a GLOSSARY.md, an ARCHITECTURE.md, or a PR description.
 ---
 
 # Domain Modeling
@@ -65,6 +65,10 @@ When a term is resolved, update `docs/GLOSSARY.md` right there. Don't batch thes
 When a stack choice, context, layout rule, layering rule, or seam is settled, update `docs/ARCHITECTURE.md` right there, the same way you update the glossary. Use the format in [ARCHITECTURE-FORMAT.md](references/ARCHITECTURE-FORMAT.md).
 
 `ARCHITECTURE.md` holds today's conventions at module altitude: facts, not history. Do not treat it as a decision log, a changelog, a task list, or a design doc for a single feature. When a convention changes, rewrite it in place.
+
+### Write PR descriptions to spec
+
+When opening a PR, write its description with the format in [PR-FORMAT.md](references/PR-FORMAT.md). The acceptance criteria go in verbatim: the description is the spec the PR is reviewed against.
 
 ## Checking code against the docs
 
