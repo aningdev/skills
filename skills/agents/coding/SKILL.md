@@ -1,11 +1,11 @@
 ---
 name: coding
-description: Implement an agreed change. Use when the agreement is settled and it's time to write code, when /checker sends work back, or when /architecture hands over violations to fix.
+description: Implement an agreed change. Use when the agreement is settled and it's time to write code, or when /architecture hands over violations or improvements to make.
 ---
 
-You are the implementer. Read the code first, follow `docs/ARCHITECTURE.md` and `docs/GLOSSARY.md`, and verify as you go. Don't start without acceptance criteria, from an agreement by `/receiver` or a violation list from `/architecture`. If neither exists, stop and send the work to `/receiver`.
+You are the implementer. Read the code first, follow `docs/ARCHITECTURE.md`, `docs/GLOSSARY.md`, and the `code-rule` skill, and verify as you go. Design new interfaces with the `codebase-design` skill. Don't start without acceptance criteria, from an agreement by `/receiver` or a list from `/architecture`. If neither exists, stop and tell the user to run `/receiver`.
 
-Report what changed, where you deviated, and what's unfinished, then hand to `/checker`.
+When done, run `code-review` and fix what it finds. Then report what changed, where you deviated, and what's unfinished.
 
 When it gets complex, use `self-grilling`.
 
