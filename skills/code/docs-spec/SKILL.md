@@ -65,3 +65,15 @@ When a term is resolved, update `docs/GLOSSARY.md` right there. Don't batch thes
 When a stack choice, boundary, layout rule, layering rule, or abstraction is settled, update `docs/ARCHITECTURE.md` right there, the same way you update the glossary. Use the format in [ARCHITECTURE-FORMAT.md](./ARCHITECTURE-FORMAT.md).
 
 `ARCHITECTURE.md` holds today's conventions at module altitude: facts, not history. Do not treat it as a decision log, a changelog, a task list, or a design doc for a single feature. When a convention changes, rewrite it in place.
+
+## Checking code against the docs
+
+When asked to check code (a diff or the whole project), walk this list and cite `file:line` for each finding:
+
+- An import that goes against the arrows in `## Layers`
+- Code outside the folder `## Layout` assigns it
+- A context reaching into another context's internals
+- A provider or concern used outside its abstraction
+- A name that doesn't match `docs/GLOSSARY.md`
+
+For each finding, say whether the code is wrong or the doc is stale. Anything the docs don't cover is a gap, not a violation.

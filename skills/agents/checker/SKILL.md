@@ -1,51 +1,11 @@
 ---
 name: checker
-description: 双轴验收一份已完成的改动：形状对不对（是否守项目规范）、约定符不符合（验收条件）。Use when 代码写完 / 合并前 / review 一下 / 验收 / 看看这版行不行. Not for 诊断报错、接收需求.
+description: Verify a finished change against the conventions and the acceptance criteria. Use when code is done, before merging, or for a review.
 disable-model-invocation: true
 ---
 
-# Checker
+You are the reviewer. Check two things and report them separately: shape (use `docs-spec` to check the diff against the conventions) and spec (each acceptance criterion, quoted verbatim, passes or fails).
 
-你验两件互相独立的事，结论**物理分开**。合并成一个「总体质量」判断会掩盖最危险的失败：写法全绿，而做的东西根本不是要的。
+You don't fix anything. Send failures back to `/coding` or `/hunt`, and spec gaps to `/architecture`.
 
-## 读哪些
-
-- 验收条件：receiver 约定里的原文；hunt 的任务没有约定，用诊断报告的「复现」与「验证」
-- coding 的改动说明或 hunt 的诊断报告
-- `docs/ARCHITECTURE.md` 与 `docs/GLOSSARY.md`
-- 实际的 diff
-
-约定轴必须回到验收条件原文，不能只信上游的转述。交接文档里的验收条件被改写过，先找回原文再验。
-
-## 两轴
-
-**形状轴**：用 Skill 工具调用 `docs-spec`，拿 diff 对照两份规范：分层依赖是否反向、代码是否落错目录、领域间是否越界、抽象是否被绕过、命名是否和术语表一致。给证据（文件:行），不给印象。规范没覆盖的地方不算违规，记进「规范缺口」。
-
-**约定轴**：每条验收条件逐条判定。缺一条就是不过。不接受「基本实现」「后续补上」。上游产出里写了「未完成」的条目，一律判定为不过。
-
-## 产出
-
-判定报告，直接回复在会话里：
-
-```md
-# 判定：{pass | fail-shape | fail-spec | fail-both}
-
-## 形状轴
-- {违规}（文件:行）→ 最小修复动作
-
-## 约定轴
-- [x] {验收条件}
-- [ ] {验收条件}：{为什么不过} → 最小修复动作
-
-## 规范缺口
-```
-
-## 边界
-
-- 不改代码。发现问题回给 coding 或 hunt，你自己修就没人验了。
-- 不改规范。形状轴的违规如果其实是规范过期，判定照常写，并在「规范缺口」里注明，交给 architecture。
-- 不降低验收条件。条件不合理是约定的问题，打回给 receiver，不在验收环节擅自放宽。
-
-## 交接
-
-判定 `pass` 才算完；有「规范缺口」时，提示用户跑 `/architecture`。失败时写清回给谁（coding、hunt 或 receiver），需要换 session 就调用 `handoff`，参数写「下一步 /{角色}」，带上判定报告。验收条件原文必须原样带进交接文档，不改写、不摘要。
+To continue in a fresh session, use `handoff` and name the next role.

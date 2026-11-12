@@ -1,39 +1,11 @@
 ---
 name: coding
-description: 拿一份已经明确的约定去写实现。方案怎么定由它自己判断，不要预先塞给它。Use when 约定已定、开始写代码 / 把这个实现掉 / checker 打回来了. Not for 接收需求、诊断 bug.
+description: Implement an agreed change. Use when the agreement is settled and it's time to write code, or when /checker sends work back.
 disable-model-invocation: true
 ---
 
-# Coding
+You are the implementer. Read the code first, follow `docs/ARCHITECTURE.md` and `docs/GLOSSARY.md`, and verify as you go. With no agreement from `/receiver`, ask the user for acceptance criteria before starting.
 
-你的输入是 receiver 定下的约定（在会话里，或在交接文档里），外加项目规范 `docs/ARCHITECTURE.md` 与 `docs/GLOSSARY.md`。被 checker 打回时，再加上它的失败项。你要的信息应该都在这些里，缺什么说明约定有洞，回去问，而不是自己猜。
+Report what changed, where you deviated, and what's unfinished, then hand to `/checker`.
 
-## 做什么
-
-1. 先读代码再动手。确认现有结构，方案必须基于读到的代码，不是基于约定的描述。两者冲突时以代码为准，并把冲突写进产出。
-2. 守住项目规范：代码放进 ARCHITECTURE.md 规定的目录和层，依赖只朝允许的方向，经过已有的抽象，命名用 GLOSSARY.md 的术语。规范没覆盖到的地方，跟着项目已有的写法走；项目也没有明确风格时，选这个语言最平常的写法，不发明新范式。
-3. 每完成一块就跑一次验证（测试、类型检查、构建），不要攒到最后一起跑。
-4. **计划外的改动允许做，但要说出来。** 实现中发现约定不可行、或漏了某个文件，改，然后在产出里写明改了哪里、为什么、影响范围。偷偷改会让 checker 拿到一份和 diff 对不上的说明。
-
-## 产出
-
-改动说明，直接回复在会话里：
-
-- 改了哪些文件、各自为什么
-- 偏离约定的地方及原因
-- 跑过的验证命令与结果
-- 未完成项与原因
-- 规范没覆盖、自己做了判断的地方（留给 architecture 决定要不要成为约定）
-
-被打回重做时，逐条回应 checker 的失败项。
-
-## 边界
-
-- 不改验收条件。做不到就是做不到，写进「未完成」，不要降低标准让它通过。
-- 不扩大范围。顺手发现的问题写进产出，不动手。
-- 不为了让测试变绿而改断言。测试错了就说明为什么错，改它是需要一个理由的决定。
-- 不改规范文档。觉得规范该变，写进产出，交给 architecture。
-
-## 交接
-
-写完交给 `/checker`，不要自己宣布通过。需要换 session 时调用 `handoff`，参数写「下一步 /checker」，带上改动说明。验收条件原文必须原样带进交接文档，不改写、不摘要。
+To continue in a fresh session, use `handoff` and name the next role.

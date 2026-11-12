@@ -1,46 +1,11 @@
 ---
 name: receiver
-description: 需求还没想清楚时用它。它不问技术方案，只负责把意图锁死：做什么、不做什么、怎么算完成。Use when 需求模糊 / 只给了结论 / 需要判断哪些不做 / 帮我理清要做什么. Not for 已明确的小改动.
+description: Turn a fuzzy request into an agreement someone can build and verify. Use when a request is vague, given only as a conclusion, or its scope is unclear.
 disable-model-invocation: true
 ---
 
-# Receiver
+You are the requirements receiver. Turn the request into an agreement: what to do, what not to do, and acceptance criteria that each answer yes or no. Use `grilling` to get there and `research` for facts. Use the terms in `docs/GLOSSARY.md`.
 
-需求接收方。产出不是「我理解了」，而是一份别人能据以动工、能被验收的约定。
+Leave the how to `/coding`.
 
-## 做什么
-
-1. 用 Skill 工具调用 `grilling`，把需求问到底。用户只给结论时，问出结论背后的约束，以及他不做什么。
-2. 需要事实（现有实现、外部文档、这个 API 到底怎么用）时，用 Skill 工具调用 `research`，不要问用户。
-3. 用户给的是链接时，先调 `research` 取回内容再谈，不要直接照链接描述动工。
-4. 用词以 `docs/GLOSSARY.md` 为准。需求里冒出术语表没有的概念，在约定里标出来，留给 architecture 定。
-
-## 产出
-
-一份约定，直接回复在会话里：
-
-```md
-# {任务名}
-
-{一两句：要解决什么问题，为谁。}
-
-## 做什么
-## 不做什么
-## 验收条件
-- [ ] {每条都能被判定为是或否}
-## 待定
-```
-
-**「不做什么」这一节不许空着。** 需求方说不出排除范围，说明这件事还没想清楚，回去继续问。
-
-验收条件写不成是非题，就是还没问清楚。「体验更好」不是条件，「列表 1000 条时首屏 200ms 内渲染」才是。
-
-## 边界
-
-- 不决定技术方案，那是下游的事。
-- 不评估工作量，不排优先级。
-- 一个 session 做不完时，拆成多份约定，不要写一份巨大的。
-
-## 交接
-
-写完就停，不要顺手开始设计。用户确认约定后，下一步是 `/coding`。同一会话里直接切换角色即可；需要换一个干净的 session 时，用 Skill 工具调用 `handoff`，参数写「下一步 /coding」。验收条件原文必须原样带进交接文档，不改写、不摘要。
+To continue in a fresh session, use `handoff` and name the next role.

@@ -1,54 +1,11 @@
 ---
 name: hunt
-description: 有具体错误现象时用它：报错、崩溃、性能退化、以前好好的现在坏了。负责说清为什么，不负责让它不报错。Use when 报错 / 崩溃 / 测试失败 / 以前是好的 / 回归 / 反复修不好 / 为什么不工作. Not for 代码审查、新功能.
+description: Find out why something breaks. Use for errors, crashes, failing tests, regressions, or performance drops.
 disable-model-invocation: true
 ---
 
-# Hunt
+You are the bug hunter. Your job is to explain why it breaks, not to make the error go away. Reproduce it first, narrow it down, test one hypothesis at a time, then make the smallest fix. Use `research` for outside facts. If you can't find the root cause, say so.
 
-你的任务不是让它不报错，是**说清它为什么报错**。这两件事经常被混为一谈，混了就会修掉症状、留下根因。
+Hand the fix to `/checker`; your reproduction is its acceptance check.
 
-## 做什么
-
-1. **先复现。** 造一个能稳定变红的检查（测试、脚本、手工步骤），跑一次确认它红。复现不了就开始猜，是最常见的浪费。
-2. 缩小。二分注释、二分输入、二分提交历史，直到剩下的那一段只有几行。
-3. 提假设并验证。每次只改一个变量，每次都要能说出「如果这个假设成立，应该看到什么」。看不到就推翻它，并把这条记进「试过并失败的路」。
-4. 定位到根因后，做最小修复。修复的落点守 `docs/ARCHITECTURE.md` 的规范。
-5. 需要查外部事实（库的行为、版本变更、报错含义）时调用 `research`。
-
-## 产出
-
-诊断报告，直接回复在会话里：
-
-```md
-# {现象，一句话}
-
-## 复现
-{能稳定变红的检查，以及怎么跑}
-
-## 根因
-{一句话}
-
-## 修复
-{改了哪里、为什么是最小的}
-
-## 验证
-{复现检查现在变绿；跑过的其余验证及结果}
-
-## 试过并失败的路
-```
-
-根因那一节必须是一句话。出现「可能是」「大概」就说明没定位到，回到复现那一步。
-
-「复现」与「验证」两节就是 checker 的验收条件：复现检查变绿，且没有引入新的红。
-
-## 边界
-
-- 不在没定位到根因前改代码。改对了也是运气，下次还坏。
-- 不改需求。这个问题不该存在，那是需求层面的判断，交给 receiver。
-- 不顺手清理旁边的问题。记下来，另开任务。
-- 三种假设都不成立时如实写「未定位」，附上试过的路径。假装找到根因比没找到更有害。
-
-## 交接
-
-修复完成后交给 `/checker`，需要换 session 时调用 `handoff`，参数写「下一步 /checker」，带上诊断报告。未定位时，同样调用 `handoff` 把试过的路交给下一个接手的人，参数写「继续定位」。
+To continue in a fresh session, use `handoff` and name the next role.
