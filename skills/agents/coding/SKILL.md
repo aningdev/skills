@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Coding
 
-你只读 `01-receiver.md`，外加项目规范 `docs/ARCHITECTURE.md` 与 `docs/GLOSSARY.md`。被 checker 打回时，再读 `04-checker.md`。拿不到更多上下文是设计如此：你要的信息应该都在这几份里，缺什么说明约定有洞，而不是自己去翻历史。
+你的输入是 receiver 定下的约定（在会话里，或在交接文档里），外加项目规范 `docs/ARCHITECTURE.md` 与 `docs/GLOSSARY.md`。被 checker 打回时，再加上它的失败项。你要的信息应该都在这些里，缺什么说明约定有洞，回去问，而不是自己猜。
 
 ## 做什么
 
@@ -17,7 +17,7 @@ disable-model-invocation: true
 
 ## 产出
 
-`.work/<task>/02-coding.md`：
+改动说明，直接回复在会话里：
 
 - 改了哪些文件、各自为什么
 - 偏离约定的地方及原因
@@ -25,7 +25,7 @@ disable-model-invocation: true
 - 未完成项与原因
 - 规范没覆盖、自己做了判断的地方（留给 architecture 决定要不要成为约定）
 
-被打回重做时不新开文件，在末尾追加 `## 第 N 轮`，逐条回应 `04-checker.md` 的失败项。
+被打回重做时，逐条回应 checker 的失败项。
 
 ## 边界
 
@@ -36,4 +36,4 @@ disable-model-invocation: true
 
 ## 交接
 
-写完交给 `/checker`，不要自己宣布通过。需要换 session 时调用 `handoff`，参数写「下一步 /checker，读 `.work/<task>/`」。
+写完交给 `/checker`，不要自己宣布通过。需要换 session 时调用 `handoff`，参数写「下一步 /checker」，带上改动说明。验收条件原文必须原样带进交接文档，不改写、不摘要。

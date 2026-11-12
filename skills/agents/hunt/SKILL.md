@@ -18,7 +18,7 @@ disable-model-invocation: true
 
 ## 产出
 
-hunt 通常是链路的入口：没有 `.work/<task>/` 就自己建，写 `.work/<task>/03-hunt.md`：
+诊断报告，直接回复在会话里：
 
 ```md
 # {现象，一句话}
@@ -51,4 +51,4 @@ hunt 通常是链路的入口：没有 `.work/<task>/` 就自己建，写 `.work
 
 ## 交接
 
-修复完成后交给 `/checker`。未定位时，调用 `handoff` 把试过的路交给下一个接手的人，参数写「继续定位，读 `.work/<task>/03-hunt.md`」。
+修复完成后交给 `/checker`，需要换 session 时调用 `handoff`，参数写「下一步 /checker」，带上诊断报告。未定位时，同样调用 `handoff` 把试过的路交给下一个接手的人，参数写「继续定位」。

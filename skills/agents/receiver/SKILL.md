@@ -17,7 +17,7 @@ disable-model-invocation: true
 
 ## 产出
 
-给任务起一个短横线连接的名字，写 `.work/<task>/01-receiver.md`：
+一份约定，直接回复在会话里：
 
 ```md
 # {任务名}
@@ -43,4 +43,4 @@ disable-model-invocation: true
 
 ## 交接
 
-写完就停，不要顺手开始设计。下一步是 `/coding`。需要换一个干净的 session 时，用 Skill 工具调用 `handoff`，参数写「下一步 /coding，读 `.work/<task>/01-receiver.md`」。
+写完就停，不要顺手开始设计。用户确认约定后，下一步是 `/coding`。同一会话里直接切换角色即可；需要换一个干净的 session 时，用 Skill 工具调用 `handoff`，参数写「下一步 /coding」。验收条件原文必须原样带进交接文档，不改写、不摘要。

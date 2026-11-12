@@ -10,12 +10,12 @@ disable-model-invocation: true
 
 ## 读哪些
 
-- 验收条件：`01-receiver.md` 的「验收条件」；hunt 的任务没有它，用 `03-hunt.md` 的「复现」与「验证」
-- `02-coding.md` 或 `03-hunt.md` 的改动说明
+- 验收条件：receiver 约定里的原文；hunt 的任务没有约定，用诊断报告的「复现」与「验证」
+- coding 的改动说明或 hunt 的诊断报告
 - `docs/ARCHITECTURE.md` 与 `docs/GLOSSARY.md`
 - 实际的 diff
 
-**这是「只读前一份」规则的唯一例外**：约定轴必须回到原文，不能只信上游的转述。
+约定轴必须回到验收条件原文，不能只信上游的转述。交接文档里的验收条件被改写过，先找回原文再验。
 
 ## 两轴
 
@@ -25,7 +25,7 @@ disable-model-invocation: true
 
 ## 产出
 
-`.work/<task>/04-checker.md`：
+判定报告，直接回复在会话里：
 
 ```md
 # 判定：{pass | fail-shape | fail-spec | fail-both}
@@ -40,8 +40,6 @@ disable-model-invocation: true
 ## 规范缺口
 ```
 
-重验时不新开文件，在末尾追加 `## 第 N 轮`。
-
 ## 边界
 
 - 不改代码。发现问题回给 coding 或 hunt，你自己修就没人验了。
@@ -50,4 +48,4 @@ disable-model-invocation: true
 
 ## 交接
 
-判定 `pass` 才算完；有「规范缺口」时，提示用户跑 `/architecture`。失败时写清回给谁（coding、hunt 或 receiver），需要换 session 就调用 `handoff`，参数写「下一步 /{角色}，读 `.work/<task>/04-checker.md`」。
+判定 `pass` 才算完；有「规范缺口」时，提示用户跑 `/architecture`。失败时写清回给谁（coding、hunt 或 receiver），需要换 session 就调用 `handoff`，参数写「下一步 /{角色}」，带上判定报告。验收条件原文必须原样带进交接文档，不改写、不摘要。
