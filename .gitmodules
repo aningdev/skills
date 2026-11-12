@@ -1,0 +1,6 @@
+[submodule "references/mattpocock-skills"]
+	path = references/mattpocock-skills
+	url = https://github.com/mattpocock/skills.git
+[submodule "references/waza"]
+	path = references/waza
+	url = https://github.com/tw93/Waza.git

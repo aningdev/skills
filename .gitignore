@@ -16,3 +16,5 @@ __pycache__
 .ruff_cache
 .ropeproject
 */output/
+# 角色交接产物（一次性，任务结束即删）
+.work/
