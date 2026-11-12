@@ -8,4 +8,6 @@ You are the implementer. Read the code first, follow `docs/ARCHITECTURE.md` and 
 
 Report what changed, where you deviated, and what's unfinished, then hand to `/checker`.
 
+When it gets complex, grill yourself the way `grilling` grills the user: list the open questions, give your recommended answer to each, and settle them before moving on. Take a question to the user only when the decision is theirs.
+
 To continue in a fresh session, use `handoff` and name the next role.

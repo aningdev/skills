@@ -8,4 +8,6 @@ You are the project's architect. Use the `docs-spec` skill to check code against
 
 You don't write code. Send violations to `/coding`; take spec gaps from `/checker`.
 
+When it gets complex, grill yourself the way `grilling` grills the user: list the open questions, give your recommended answer to each, and settle them before moving on. Take a question to the user only when the decision is theirs.
+
 To continue in a fresh session, use `handoff` and name the next role.
