@@ -42,7 +42,15 @@ HOME = Path.home()
 STORE = HOME / ".agents" / "skills" / "observe-result" / ".observer"
 LIMIT = 6000  # characters kept per prompt or reply
 
-MARKERS = frozendict(grilling="❓", **{"self-grilling": "Calls I made:"})
+# A round starts only where its marker opens a line (after any list, quote, heading, or table
+# markup) or a new sentence; a marker quoted mid-sentence isn't one. A grilling round keeps
+# its goal line.
+MARKERS = frozendict(
+    grilling=re.compile(
+        r"(?:^[ \t>*#|-]*|(?<=[。！？.!?] ))(?:🎯.*\n+[ \t>*#|-]*)?❓", re.MULTILINE
+    ),
+    **{"self-grilling": re.compile(r"^Calls I made:", re.MULTILINE)},
+)
 NOISE = (
     "<agent-message",
     "<task-notification",
@@ -188,9 +196,8 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
             continue
         said = "\n".join(t.text for t in turn)
         for source, marker in MARKERS.items():
-            if (at := said.find(marker)) >= 0:
-                if source == "grilling" and 0 <= (goal := said.rfind("🎯", 0, at)):
-                    at = goal  # keep the round's goal line with its questions
+            if found := marker.search(said):
+                at = found.start()
                 open_round = {
                     **base,
                     "source": source,
@@ -201,7 +208,9 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
                 rounds.append(open_round)
                 break
         turn = []
-    if turn and any(m in "\n".join(t.text for t in turn) for m in MARKERS.values()):
+    if turn and any(
+        m.search("\n".join(t.text for t in turn)) for m in MARKERS.values()
+    ):
         # the last round is still waiting for its reply: resume at its question
         end = turn[0].line
     return rounds, end, False

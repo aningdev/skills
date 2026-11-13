@@ -20,7 +20,7 @@ Before turning anything into a principle, check whether another layer already ho
 
 ## Whose words
 
-Only the user's own words count. A message one agent wrote to another, such as a brief handed to pi, is never the user's preference. A round that quotes a format rather than using it, such as a message explaining what `Calls I made:` looks like, isn't a decision; skip it.
+Only the user's own words count. A message one agent wrote to another, such as a brief handed to pi, is never the user's preference. The digest only takes a marker that opens a line or a sentence, so a message explaining a format isn't copied as a round; if one still slips through, skip it.
 
 ## Counting sightings
 
