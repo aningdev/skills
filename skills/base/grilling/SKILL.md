@@ -10,6 +10,8 @@ Work the tree in **rounds**. The **frontier** is every decision whose prerequisi
 Format a round like so:
 
 ```
+🎯 <the goal the user is after, in their words>
+
 ❓ **Q1** - **<question title>**: <question body, might be multiple paragraphs, including multiple choices>
 
 ➡️ <your recommended answer>
@@ -23,7 +25,7 @@ Format a round like so:
 
 Word each question so "yes" accepts your recommended answer.
 
-Open each round with one line restating the goal the user is after, in their words, so every question is measured against it and the tree doesn't drift.
+Open each round with the 🎯 line restating the goal the user is after, so every question is measured against it and the tree doesn't drift.
 
 Before recommending, check how the user has decided this kind of question before (the `observe-result` skill, when it's installed). When a principle applies, follow it and name it in the recommendation.
 

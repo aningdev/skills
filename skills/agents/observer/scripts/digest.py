@@ -12,6 +12,10 @@ user's reply, kept as raw text. Nothing is judged here: the observer reads the r
 goes back to the session through `ref` when it needs more. Each agent tool has a reader
 in READERS; add one to support another tool.
 
+Feedback the agents already distilled during a session, Claude Code's per-project
+memory files of type `feedback`, is copied too, as rounds with source `memory`, so the
+observer can promote what several projects agree on and skip what one project keeps.
+
 Only what's new is read. Each session file is resumed from the byte offset where the last
 run stopped, and skipped when it hasn't grown. New rounds land in `inbox.jsonl`; once the
 observer's report is confirmed, `--archive` moves them into `rounds/YYYY-MM.jsonl`, so the
@@ -35,7 +39,7 @@ from pathlib import Path
 lazy import argparse
 
 HOME = Path.home()
-STORE = HOME / ".agents" / "observe-result" / ".observer"
+STORE = HOME / ".agents" / "skills" / "observe-result" / ".observer"
 LIMIT = 6000  # characters kept per prompt or reply
 
 MARKERS = frozendict(grilling="❓", **{"self-grilling": "Calls I made:"})
@@ -185,6 +189,8 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
         said = "\n".join(t.text for t in turn)
         for source, marker in MARKERS.items():
             if (at := said.find(marker)) >= 0:
+                if source == "grilling" and 0 <= (goal := said.rfind("🎯", 0, at)):
+                    at = goal  # keep the round's goal line with its questions
                 open_round = {
                     **base,
                     "source": source,
@@ -199,6 +205,29 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
         # the last round is still waiting for its reply: resume at its question
         end = turn[0].line
     return rounds, end, False
+
+
+def read_memories() -> Iterator[dict]:
+    """Yield each Claude Code feedback memory as a round: its name and description, and its body."""
+    for path in sorted((HOME / ".claude" / "projects").glob("*/memory/*.md")):
+        text = path.read_text()
+        head, _, body = text.partition("\n---\n")
+        fields = {
+            k: v.strip('"')
+            for k, v in re.findall(r"^\s*(\w+):\s*(.+?)\s*$", head, re.MULTILINE)
+        }
+        if path.name == "MEMORY.md" or fields.get("type") != "feedback":
+            continue
+        yield {
+            "ts": fields.get("modified", ""),
+            "tool": "claude-memory",
+            "project": path.parent.parent.name,
+            "session": "",
+            "ref": str(path),
+            "source": "memory",
+            "prompt": f"{fields.get('name', '')}: {fields.get('description', '')}",
+            "reply": body.strip()[:LIMIT],
+        }
 
 
 def archive(store: Path) -> int:
@@ -265,6 +294,13 @@ def main() -> int:
                     known.add(key)
                     found.append(r)
             state[str(path)] = {"offset": end, "agent": by_agent}
+    for r in read_memories():  # a memory reappears only when its text changes
+        key = hashlib.sha1(
+            f"{r['source']}{r['prompt']}{r['reply']}".encode()
+        ).hexdigest()[:12]
+        if key not in known:
+            known.add(key)
+            found.append(r)
 
     if args.dry_run:
         for r in found:

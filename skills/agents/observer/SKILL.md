@@ -16,7 +16,7 @@ A run goes like this:
 2. **Read** the rounds in the inbox, not whole transcripts and not the archive, and judge each decision: [READING.md](references/READING.md).
 3. **Learn**: which principles form, strengthen, weaken, or retire, and which changes are earned: [IMPROVING.md](references/IMPROVING.md).
 4. **Report**: the metrics and their trend, up to five principle changes, role lessons, and proposals.
-5. **Write** what the user confirms into the `observe-result` skill, in the shapes in [STORE.md](references/STORE.md), then `uv run scripts/digest.py --archive` so the next run starts from an empty inbox.
+5. **Write** what the user confirms into the `observe-result` skill's `references/`, in the shapes in [STORE.md](references/STORE.md); its `SKILL.md` stays the fixed copy from `assets/`. Then `uv run scripts/digest.py --archive` so the next run starts from an empty inbox.
 
 The digest writes the inbox and its own progress on its own. Principles, role lessons, and metrics wait for the user to confirm the report. Other agents read the `observe-result` skill; only you write it. Skills, roles, and projects change only when the user approves each proposal; after changing this skills repo, run its checks.
 

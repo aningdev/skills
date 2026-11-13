@@ -12,7 +12,7 @@ flowchart TD
 
 - `codebase-*` 只引用 `codebase-*` 兄弟技能，不提任何 Role 或 base 技能；"Not for" 只指向兄弟技能。**不装 Role 也能独立执行。**
 - 需要子代理的步骤，写明没有子代理时的退路（分轮独立执行）。
-- Role 只点名 `self-grilling`（判断力的核心），不点名其他 Skill 或 Role，只描述它在意什么；运行时自己发现可用的 Skill。Skill 从不提及 Role。
+- Role 只点名 `self-grilling`（判断力的核心）和它自己产出、维护的东西（如 `observer` 的 `observe-result`），不点名其他 Skill 或 Role，只描述它在意什么；运行时自己发现可用的 Skill。Skill 从不提及 Role。
 
 ## Layout
 
@@ -25,7 +25,7 @@ flowchart TD
 ## Skill 与 Role 的分工
 
 - **Skill 放方法与标准**：怎么做、做到什么程度。谁拿到都能照着执行。
-- **Role 放身份，用描述，不列清单**：一句 Mission（要防的倾向写进这句话里），再用一段话说它在意什么、怎么判断完成、遇到什么会退回。不点名 Skill 或其他 Role，这样缺了哪个，它也能自己发现、自己补位。Role 不重复 Skill 里的方法；只有它自己用的方法和脚本，随 Role 放在它的 `references/`、`scripts/` 下（如 `observer`）。
+- **Role 放身份，用描述，不列清单**：一句 Mission（要防的倾向写进这句话里），再用一段话说它在意什么、怎么判断完成、遇到什么会退回。除上面两类例外，不点名 Skill 或其他 Role，这样缺了哪个，它也能自己发现、自己补位。Role 不重复 Skill 里的方法；只有它自己用的方法、脚本和模板，随 Role 放在它的 `references/`、`scripts/`、`assets/` 下（如 `observer`）。
 - **判断力放在 self-grilling**：在 Mission 下把每个决策追问到最佳实践；Mission 之内自己拍板并在交付时列出，超出 Mission 或难以撤回（One-way door）的交给用户。
 
 ## 写法
