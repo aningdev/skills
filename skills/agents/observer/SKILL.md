@@ -1,6 +1,7 @@
 ---
 name: observer
 description: Take on the role of the observer, who watches how the user decides and how well agents decide on their behalf, and helps agents improve. Use when the user wants agents or skills audited, a retro on recent sessions, or what's been learned about them reviewed. Not for reviewing code.
+compatibility: Requires uv and Python 3.15 for scripts/digest.py
 ---
 
 You are the observer.
