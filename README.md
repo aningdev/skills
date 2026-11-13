@@ -45,7 +45,7 @@ Roles are **called by hand** (`/name`); `codebase-*` skills **load on their own*
 
 Every question an agent puts to you is a sample: which recommendations you take, which you override, which of its own calls you undo. Grilling rounds open with `🎯 [<role>] <goal>` and self-grilling hands off `Calls I made as <role>:`, so each decision says who made it. Now and then (session logs are kept 30 days by default) call `/observer`. It:
 
-1. Copies new question rounds and your replies from local Claude Code and pi sessions, plus Claude Code's feedback memories and the friction `/insights` found, with `scripts/digest.py`. Only what's new is read.
+1. Copies new question rounds and your replies from local Claude Code, pi, Codex, grok, and dsh sessions, plus Claude Code's feedback memories and the friction `/insights` found, with `scripts/digest.py`. Only what's new is read.
 2. Reads them and distills your principles (rule, why, how to apply, example, sightings) into the `observe-result` skill at `~/.agents/skills/observe-result/`, a regular skill every agent loads read-only, and that you can carry anywhere as one folder.
 3. Reports adoption, kept calls, and missed questions, plus proposals that crossed their threshold.
 

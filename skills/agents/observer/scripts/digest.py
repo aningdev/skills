@@ -12,7 +12,7 @@ user's reply, kept as raw text. A turn in which the agent changed files is a rou
 source `delivery`: the agent's closing words and whatever the user said next, since that's
 where corrections of delivered work show up. Nothing is judged here: the observer reads the rounds and
 goes back to the session through `ref` when it needs more. Each agent tool has a reader
-in READERS; add one to support another tool.
+in READERS (Claude Code, pi, Codex, grok, dsh); add one to support another tool.
 
 Feedback the agents already distilled during a session, Claude Code's per-project
 memory files of type `feedback`, is copied too, as rounds with source `memory`, so the
@@ -34,14 +34,17 @@ Usage:
 """
 
 import hashlib
+import io
 import json
 import re
 import sys
 from collections import Counter
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 lazy import argparse
+lazy from compression import zstd
 
 HOME = Path.home()
 STORE = HOME / ".agents" / "skills" / "observe-result" / ".observer"
@@ -60,7 +63,19 @@ MARKERS = frozendict(
     ),
     **{"self-grilling": re.compile(r"^Calls I made(?: as ([^:\n]+))?:", re.MULTILINE)},
 )
-EDITS = frozenset({"Edit", "Write", "MultiEdit", "NotebookEdit", "edit", "write"})
+EDITS = frozenset(
+    {
+        "Edit",
+        "Write",
+        "MultiEdit",
+        "NotebookEdit",
+        "edit",
+        "write",
+        "search_replace",
+        "apply_patch",
+    }
+)
+INJECTED = ("# AGENTS.md instructions", "<environment_context", "<user_instructions")
 NOISE = (
     "<agent-message",
     "<task-notification",
@@ -85,9 +100,37 @@ class Event:
     ref: str
 
 
+def open_log(path: Path) -> io.BufferedIOBase:
+    """Open a session log as bytes, decompressing a zstd one (dsh) whole."""
+    if path.suffix == ".zstd":
+        return io.BytesIO(zstd.decompress(path.read_bytes()))
+    return path.open("rb")
+
+
+def log_size(path: Path) -> int:
+    """The length of a session log's content, where reading resumes once it's all read."""
+    with open_log(path) as f:
+        return f.seek(0, io.SEEK_END)
+
+
+def session_id(path: Path) -> str:
+    """The short id of the session a log belongs to, from the last uuid in its path."""
+    ids = re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-", str(path))
+    return ids[-1][:8] if ids else path.stem[:8]
+
+
+def text_of(content: object, *kinds: str) -> str:
+    """Join the text blocks of a message's content, or return it when it's a string."""
+    if isinstance(content, str):
+        return content
+    return " ".join(
+        b.get("text", "") for b in content or [] if b.get("type") in kinds
+    ).strip()
+
+
 def read_jsonl(path: Path, offset: int) -> Iterator[tuple[int, dict]]:
     """Yield (byte offset, record) for each parseable JSON line from `offset` on."""
-    with path.open("rb") as f:
+    with open_log(path) as f:
         f.seek(offset)
         while line := f.readline():
             at = f.tell() - len(line)
@@ -175,18 +218,115 @@ def read_pi(path: Path, offset: int) -> Iterator[Event]:
                 yield Event(i, "edit", "", ts, cwd, ref)
 
 
-READERS: frozendict[str, tuple[Path, Callable[[Path, int], Iterator[Event]]]] = (
-    frozendict(
-        claude=(HOME / ".claude" / "projects", read_claude),
-        pi=(HOME / ".pi" / "agent" / "sessions", read_pi),
-    )
+def read_codex(path: Path, offset: int) -> Iterator[Event]:
+    """Read a Codex session: the user's words without injected context, AI text, patches, and request_user_input answers."""
+    cwd = (next(read_jsonl(path, 0), (0, {}))[1].get("payload") or {}).get("cwd", "")
+    asks: dict[str, str] = {}
+    for i, d in read_jsonl(path, offset):
+        p = d.get("payload") or {}
+        if d.get("type") != "response_item":
+            continue
+        ts, ref, kind = d.get("timestamp", ""), p.get("id") or str(i), p.get("type")
+        if kind == "message" and p.get("role") == "user":
+            text = text_of(p.get("content"), "input_text")
+            if text and not text.startswith(INJECTED):
+                yield Event(i, "user", text, ts, cwd, ref)
+        elif kind == "message" and p.get("role") == "assistant":
+            if text := text_of(p.get("content"), "output_text"):
+                yield Event(i, "assistant", text, ts, cwd, ref)
+        elif kind in ("function_call", "custom_tool_call"):
+            args = p.get("arguments") or p.get("input") or ""
+            if p.get("name") in EDITS or "*** Begin Patch" in args:
+                yield Event(i, "edit", "", ts, cwd, ref)
+            elif p.get("name", "").startswith("request_user_input"):
+                asks[p.get("call_id", "")] = args
+        elif p.get("call_id") in asks:  # the answer to a request_user_input call
+            answer = {"questions": asks.pop(p["call_id"]), "answers": p.get("output")}
+            yield Event(i, "ask", json.dumps(answer, ensure_ascii=False), ts, cwd, ref)
+
+
+def read_grok(path: Path, offset: int) -> Iterator[Event]:
+    """Read a grok session: the <user_query> the user typed, AI text, edits, and ask_user_question answers. A session with no human operator is marked 'agent'."""
+    try:
+        summary = json.loads(path.with_name("summary.json").read_text())
+    except OSError, json.JSONDecodeError:
+        summary = {}
+    cwd, ts = (summary.get("info") or {}).get("cwd", ""), summary.get("created_at", "")
+    asks: dict[str, str] = {}
+    for i, d in read_jsonl(path, offset):
+        kind, text = d.get("type"), text_of(d.get("content"), "text")
+        if kind == "system" and "no human operator" in text:
+            yield Event(i, "agent", "", ts, cwd, str(i))
+            return
+        if kind == "user" and (
+            asked := re.search(r"<user_query>\s*(.*?)\s*</user_query>", text, re.DOTALL)
+        ):
+            yield Event(i, "user", asked.group(1), ts, cwd, str(i))
+        elif kind == "assistant":
+            if text.strip():
+                yield Event(i, "assistant", text, ts, cwd, str(i))
+            for call in d.get("tool_calls") or []:
+                if call.get("name") in EDITS:
+                    yield Event(i, "edit", "", ts, cwd, str(i))
+                elif call.get("name") == "ask_user_question":
+                    asks[call.get("id", "")] = call.get("arguments", "")
+        elif kind == "tool_result" and d.get("tool_call_id") in asks:
+            answer = {"questions": asks.pop(d["tool_call_id"]), "answers": text}
+            yield Event(
+                i, "ask", json.dumps(answer, ensure_ascii=False), ts, cwd, str(i)
+            )
+
+
+def read_dsh(path: Path, offset: int) -> Iterator[Event]:
+    """Read a dsh session: the user's messages, AI text, edits, and ask_user_question answers. A delegated session is marked 'agent'."""
+    header = next(read_jsonl(path, 0), (0, {}))[1]  # the session line carries cwd
+    cwd = header.get("cwd", "")
+    if header.get("delegationDepth"):
+        yield Event(0, "agent", "", "", cwd, "")
+        return
+    asks: dict[str, str] = {}
+    for i, d in read_jsonl(path, offset):
+        kind, data = d.get("type"), d.get("data") or {}
+        ts = datetime.fromtimestamp(d.get("time", 0) / 1000, UTC).isoformat()
+        ref = str(d.get("seq", i))
+        if kind == "user/message" and (data.get("source") or {}).get("kind") == "user":
+            if text := text_of(data.get("content"), "text"):
+                yield Event(i, "user", text, ts, cwd, ref)
+        elif kind == "assistant/message":
+            if text := text_of((data.get("message") or {}).get("content"), "text"):
+                yield Event(i, "assistant", text, ts, cwd, ref)
+        elif kind == "tool/call" and data.get("name") in EDITS:
+            yield Event(i, "edit", "", ts, cwd, ref)
+        elif kind == "tool/call" and data.get("name") == "ask_user_question":
+            asks[data.get("callId", "")] = data.get("arguments", "")
+        elif kind == "tool/result":
+            message = data.get("message") or {}
+            call = (message.get("source") or {}).get("callId")
+            if call in asks:
+                answer = {
+                    "questions": asks.pop(call),
+                    "answers": message.get("content"),
+                }
+                yield Event(
+                    i, "ask", json.dumps(answer, ensure_ascii=False), ts, cwd, ref
+                )
+
+
+type Reader = Callable[[Path, int], Iterator[Event]]
+# per tool: where its sessions live, which files are session logs, and how to read one
+READERS: frozendict[str, tuple[Path, str, Reader]] = frozendict(
+    claude=(HOME / ".claude" / "projects", "*/*.jsonl", read_claude),
+    pi=(HOME / ".pi" / "agent" / "sessions", "*/*.jsonl", read_pi),
+    codex=(HOME / ".codex" / "sessions", "**/*.jsonl", read_codex),
+    grok=(HOME / ".grok" / "sessions", "*/*/chat_history.jsonl", read_grok),
+    dsh=(HOME / ".dsh" / "sessions", "*/*/session.v3.jsonl.zstd", read_dsh),
 )
 
 
 def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
     """Read a session from `offset`: its new rounds, where to resume, and whether an agent ran it."""
-    events = list(READERS[tool][1](path, offset))
-    end = path.stat().st_size
+    events = list(READERS[tool][2](path, offset))
+    end = log_size(path)
     if any(e.kind == "agent" for e in events):
         # a session run by another agent holds none of the user's words
         return [], end, True
@@ -202,7 +342,7 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
             "ts": e.ts,
             "tool": tool,
             "project": e.cwd,
-            "session": path.stem.rsplit("_", 1)[-1][:8],
+            "session": session_id(path),
             "role": "",
             "ref": f"{path}#{e.ref}",
         }
@@ -351,10 +491,10 @@ def main() -> int:
         state.get("_rounds", [])
     )  # fingerprints of rounds already taken, to drop forked copies
     found: list[dict] = []
-    for tool, (root, _) in READERS.items():
-        for path in sorted(root.glob("*/*.jsonl")):
-            seen = state.get(str(path), {})
-            if seen.get("agent") or seen.get("offset", 0) >= path.stat().st_size:
+    for tool, (root, pattern, _) in READERS.items():
+        for path in sorted(root.glob(pattern)):
+            seen, size = state.get(str(path), {}), path.stat().st_size
+            if seen.get("agent") or seen.get("size", seen.get("offset", 0)) >= size:
                 continue  # run by an agent, or nothing written since last time
             rounds, end, by_agent = extract(tool, path, seen.get("offset", 0))
             for r in rounds:
@@ -364,7 +504,7 @@ def main() -> int:
                 if key not in known:
                     known.add(key)
                     found.append(r)
-            state[str(path)] = {"offset": end, "agent": by_agent}
+            state[str(path)] = {"offset": end, "size": size, "agent": by_agent}
     for r in (
         *read_memories(),
         *read_facets(),
