@@ -7,7 +7,7 @@
 """Copy every question round from local agent sessions into the observation store.
 
 A round is a block of questions an agent put to the user (a grilling round, an ask tool
-such as AskUserQuestion, or a self-grilling `Calls I made:` list) together with the
+such as AskUserQuestion, or a self-grilling `Calls I made as <role>:` list) together with the
 user's reply, kept as raw text. Nothing is judged here: the observer reads the rounds and
 goes back to the session through `ref` when it needs more. Each agent tool has a reader
 in READERS; add one to support another tool.
@@ -47,9 +47,10 @@ LIMIT = 6000  # characters kept per prompt or reply
 # its goal line.
 MARKERS = frozendict(
     grilling=re.compile(
-        r"(?:^[ \t>*#|-]*|(?<=[。！？.!?] ))(?:🎯.*\n+[ \t>*#|-]*)?❓", re.MULTILINE
+        r"(?:^[ \t>*#|-]*|(?<=[。！？.!?] ))(?:🎯\s*(?:\[([^\]\n]+)\])?.*\n+[ \t>*#|-]*)?❓",
+        re.MULTILINE,
     ),
-    **{"self-grilling": re.compile(r"^Calls I made:", re.MULTILINE)},
+    **{"self-grilling": re.compile(r"^Calls I made(?: as ([^:\n]+))?:", re.MULTILINE)},
 )
 NOISE = (
     "<agent-message",
@@ -184,6 +185,7 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
             "tool": tool,
             "project": e.cwd,
             "session": path.stem.rsplit("_", 1)[-1][:8],
+            "role": "",
             "ref": f"{path}#{e.ref}",
         }
         if e.kind == "ask":
@@ -201,6 +203,7 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
                 open_round = {
                     **base,
                     "source": source,
+                    "role": (found.group(1) or "").strip(),  # who asked, or who decided
                     "prompt": said[at:][:LIMIT],
                     "reply": e.text[:LIMIT],
                     "ref": f"{path}#{turn[-1].ref}",
@@ -232,6 +235,7 @@ def read_memories() -> Iterator[dict]:
             "tool": "claude-memory",
             "project": path.parent.parent.name,
             "session": "",
+            "role": "",
             "ref": str(path),
             "source": "memory",
             "prompt": f"{fields.get('name', '')}: {fields.get('description', '')}",

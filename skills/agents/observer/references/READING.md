@@ -6,8 +6,8 @@ How to turn the raw rounds in `~/.agents/skills/observe-result/.observer/inbox.j
 
 A round is a block of questions put to the user, with the reply that followed. Read each question in it as one decision:
 
-- **Asked** (`grilling` or `ask-tool`): a question with a recommended answer. Did the user adopt it or override it, and what reason did they give? A reply that takes the recommendation and adds a new idea is adopted; one that answers a different question than the one asked is an override.
-- **Self-decided** (`self-grilling`): each line under `Calls I made:`. Did the user keep the call, or undo or redirect it in what they said next?
+- **Asked** (`grilling` or `ask-tool`): a question with a recommended answer. Did the user adopt it or override it, and what reason did they give? A grilling round's `role`, from its 🎯 line, says who asked: a role whose recommendations keep being overridden has a lesson to learn. A reply that takes the recommendation and adds a new idea is adopted; one that answers a different question than the one asked is an override.
+- **Self-decided** (`self-grilling`): each line under `Calls I made as <role>:`. Did the user keep the call, or undo or redirect it in what they said next? The round's `role` says who made it: what the user undoes again and again for one role is a lesson for `references/roles/<role>.md`, or for that role's mission.
 - **Missed**: a correction in a reply about something nobody asked. Rewrite it as the question that should have been asked, with the user's answer.
 - **Confirmed**: the user explicitly endorsing a choice that wasn't the obvious default ("yes, separate pages, not drawers"). It counts as a sighting just like an override: knowing what to keep matters as much as knowing what to stop. A plain "all yes" isn't one.
 - **Remembered** (`memory`): a feedback memory an agent already wrote during a session, one project at a time. Treat each as a sighting in that project, with its Why as the reason.
@@ -24,7 +24,7 @@ Only the user's own words count. A message one agent wrote to another, such as a
 
 ## Counting sightings
 
-A sighting is one session in which the user leaned the same way on the same kind of question. Saying it three times in one session is still one sighting; the count grows only across sessions and projects.
+A sighting is one session in which the user leaned the same way on the same kind of question. Saying it three times in one session is still one sighting; the count grows only across sessions and projects. Keep track of which projects each sighting came from: a principle needs two of them (see Mind the layer in IMPROVING).
 
 ## When a round isn't enough
 

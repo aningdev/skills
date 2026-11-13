@@ -11,11 +11,12 @@ The store is a skill, `~/.agents/skills/observe-result/`, so what's learned trav
     ├── state.json           per session: the byte offset read to, whether an agent ran it; fingerprints of rounds and memories taken
     ├── inbox.jsonl          rounds not yet judged (digest adds them)
     ├── rounds/YYYY-MM.jsonl judged rounds, moved by `digest.py --archive` after a confirmed report
+    ├── candidates.md        leanings seen in one project only, waiting for a second
     ├── proposals.md         changes waiting for the user
     └── metrics.md           one row per run
 ```
 
-A round is `ts · tool · project · session · source · prompt · reply · ref`, the prompt and reply as raw text.
+A round is `ts · tool · project · session · source · role · prompt · reply · ref`, the prompt and reply as raw text; `role` is who asked a grilling round (from its 🎯 line) or made a self-grilling round's calls: a role's skill name, or `no role`; empty when the round doesn't say.
 
 ## SKILL.md
 
@@ -35,11 +36,15 @@ Principles grouped by area, each in five parts:
   _6 sightings · last 2026-11-13 · AgentChat, dsh-bot, grill-me-runner, skills_
 ```
 
-Why carries the user's reason, in their words where short. How to apply says when it applies and where it stops: without a boundary, a principle gets applied everywhere. A principle seen once ends its metadata with `(weak)`. One folded into a skill or role is removed, with no tombstone left behind.
+Why carries the user's reason, in their words where short. How to apply says when it applies and where it stops: without a boundary, a principle gets applied everywhere. Every principle here was seen in at least two projects. One folded into a skill or role is removed, with no tombstone left behind.
 
 ## references/roles/<role>.md
 
 The same entry shape, about how one role decides: what the user keeps correcting it on, and what it gets right.
+
+## .observer/candidates.md
+
+The same entry shape, for a leaning that could hold anywhere but has shown up in one project so far. Promote it to `principles.md` when a second project shows it; drop it when the user goes the other way. Agents never read it. Something that belongs to one project doesn't come here either: see Mind the layer in IMPROVING.
 
 ## .observer/proposals.md
 
