@@ -44,6 +44,12 @@ _Avoid_: script, task
 做了就难以撤回的决定（hard to undo），比如换栈、改对外接口、删数据。和超出 Mission 的事一样，交给用户。
 _Avoid_: structural change, 高风险操作
 
+**Decision**:
+Agent 替用户做的一个判断，是观测的单位。三种来源：grilling 里问用户的（Asked）、self-grilling 里自己拍板的（Self-decided）、谁都没当成决定却被用户纠正的（Missed）。见 `observer` 角色。
+
+**Principle**:
+从被推翻或漏问的 Decision 里提炼出的用户判断规则，至少出现两次才成立，写在技能 `observe-result`（`~/.agents/observe-result/`）里，各 Agent 推荐或替用户做决定前只读加载。
+
 **Skill**:
 一份可被加载的方法或标准，装在 `skills/<layer>/<name>/SKILL.md`。
 

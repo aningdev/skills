@@ -32,6 +32,16 @@
 | 按约定把功能做出来                     | `/code-builder`         | codebase-lang、codebase-design、codebase-verify、codebase-git |
 | 合并前把关                             | `/code-reviewer`        | codebase-review                                               |
 
+## 让 Agent 更懂你
+
+grilling 和 self-grilling 里的每个决策都是样本：你采纳了哪些推荐、推翻了哪些、Agent 自己拍板的哪些被你改回来。隔一段时间（会话记录默认只留 30 天）调用 `/observer`，它会：
+
+1. 用 `scripts/digest.py` 把本机 Claude Code 和 pi 会话里的每一轮提问（grilling、AskUserQuestion、`Calls I made:`）连同你的回复原样存进 `~/.agents/observe-result/.observer/`
+2. 自己读这些轮次，把被推翻的、漏问的提炼成你的判断原则，写进技能 `~/.agents/observe-result/`。它是普通技能格式，可以整个文件夹带走，各个 Agent 在系统级加载、只读
+3. 报告 3 个指标（采纳率、自决保留率、漏问数）和达到门槛的改进提议
+
+都先出报告，你确认后才写入；改技能要你逐条批准。
+
 ## 容易混的名字
 
 | 名字              | 是什么                                 |
