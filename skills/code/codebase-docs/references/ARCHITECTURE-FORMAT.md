@@ -18,13 +18,6 @@ _Avoid_: MongoDB, ORMs
 
 **Messaging**: in-process domain events
 
-## Layout
-
-- `src/{context}/`: one folder per context; nothing reaches into another context's folder
-- `src/{context}/domain/`: entities and rules; no I/O
-- `src/{context}/infra/`: adapters for the database, HTTP, queues
-- `src/shared/`: types used by two or more contexts; never logic
-
 ## Layers
 
 ```mermaid
@@ -34,6 +27,13 @@ flowchart TD
   infra -. implements .-> domain
   app -. wires .-> infra
 ```
+
+## Layout
+
+- `src/{context}/`: one folder per context; nothing reaches into another context's folder
+- `src/{context}/domain/`: entities and rules; no I/O
+- `src/{context}/infra/`: adapters for the database, HTTP, queues
+- `src/shared/`: types used by two or more contexts; never logic
 ````
 
 - `domain` imports nothing outside itself

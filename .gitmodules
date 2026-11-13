@@ -4,3 +4,6 @@
 [submodule "references/waza"]
 	path = references/waza
 	url = https://github.com/tw93/Waza.git
+[submodule "references/superpowers"]
+	path = references/superpowers
+	url = https://github.com/obra/superpowers.git

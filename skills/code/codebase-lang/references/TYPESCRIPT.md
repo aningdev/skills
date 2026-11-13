@@ -9,7 +9,3 @@
 - **Accessibility.** Semantic elements (`<button>`, `<nav>`) over `<div>` with roles. Labels on inputs, alt text on images, keyboard handlers alongside mouse handlers.
 - **Security.** No `dangerouslySetInnerHTML` on unsanitized content. `rel="noopener"` with `target="_blank"`.
 - **Debris.** No `console.log` or `debugger` in committed code.
-
-## Default checks
-
-Use the project's `check` script in `package.json`.

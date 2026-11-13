@@ -1,10 +1,10 @@
 ---
 name: self-grilling
-description: Grill yourself about your own plan before acting on it. Use when a task gets complex, the path isn't obvious, or you're about to build on an assumption.
+description: Grill yourself about your own decisions under a mission, and bring the user only what's outside it or hard to undo. Use when a task gets complex, the path isn't obvious, you're about to build on an assumption, or you are acting under a role's mission and need to settle your own decisions.
 ---
 
-Run `grilling` on yourself instead of the user. Map the open questions as a **design tree** and work its **frontier** in rounds, but answer each question yourself: give your recommended answer and the reason it wins, then move on.
+Run `grilling` on yourself, with a **mission** as the yardstick: the role's mission, or else one sentence distilled from the request.
 
-Look up facts rather than guess them. Take a question to the user only when the decision is theirs; batch those into one round in the `grilling` format, each with your recommended answer.
+Answer each question yourself with the option that best serves the mission by current best practice. Take to the user only what's outside the mission or would be hard to undo (changing the stack, a public interface, deleting data).
 
-Done when the frontier is empty and nothing is left silently assumed.
+When you hand off, list the calls you made yourself.

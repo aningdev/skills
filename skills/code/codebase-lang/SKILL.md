@@ -1,9 +1,9 @@
 ---
-name: code-rule
-description: Language-level coding rules for Python, Rust, and TypeScript. Use when writing, fixing, or reviewing code in .py, .rs, .ts, .tsx, .js, or .jsx files.
+name: codebase-lang
+description: Language-level coding rules for Python, Rust, and TypeScript, covering what formatters and linters won't catch. Use when writing, fixing, or reviewing code in .py, .rs, .ts, .tsx, .js, or .jsx files. Not for toolchain or project setup (codebase-setup).
 ---
 
-# Code Rules
+# Codebase Lang
 
 Project conventions come first: `docs/ARCHITECTURE.md`, the project's config, and the code already there. These rules fill the gaps, and only cover what formatters and linters won't catch.
 
@@ -32,4 +32,4 @@ Read the file for the language you're touching:
 
 ## Before handing off
 
-Run the project's own check commands. If it has none, run the defaults in the language file. Autofix commands rewrite source: run them only when you mean to review the result.
+Run the project's `check` (the `codebase-setup` skill).

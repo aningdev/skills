@@ -1,6 +1,6 @@
 ---
 name: codebase-design
-description: Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.
+description: Shared vocabulary for designing deep modules. Use when designing or improving a module's interface, looking for deepening opportunities, deciding where a seam goes, making code more testable or AI-navigable, or when another skill needs the deep-module vocabulary. Not for project-wide layout or layering conventions (codebase-docs).
 ---
 
 # Codebase Design
@@ -108,7 +108,23 @@ Good interfaces make testing natural:
 - **"Interface" as the TypeScript `interface` keyword or a class's public methods**: too narrow: interface here includes every fact a caller must know.
 - **"Boundary"**: overloaded with DDD's bounded context. Say **seam** or **interface**.
 
+## Finding deepening candidates
+
+To improve a codebase's structure, start where it hurts:
+
+1. **Find the hot spots.** Files that change most often in recent commit history, and files that change together, are where shallow modules cost the most.
+2. **Walk them fresh.** Have a reader with no stake in the code (a fresh sub-agent, or a separate pass of your own if you can't spawn one) walk the hot spots for shallow modules: interfaces nearly as complex as their implementations, pass-throughs, and the same concern leaking across several modules.
+3. **List the candidates.** Each with what it would deepen, the leverage and locality it would buy, and a before/after Mermaid diagram.
+4. **Let the user pick one**, with your recommendation, and settle its open decisions before changing anything (see Asking the user).
+5. **Write down what's settled**: conventions go in `docs/ARCHITECTURE.md` (the `codebase-docs` skill), and the change itself gets acceptance criteria like any other.
+
+**Done when:** the user has picked a candidate and its conventions are written down.
+
 ## Going deeper
 
 - **Deepening a cluster given its dependencies**, see [DEEPENING.md](references/DEEPENING.md): dependency categories, seam discipline, and replace-don't-layer testing.
 - **Exploring alternative interfaces**, see [DESIGN-IT-TWICE.md](references/DESIGN-IT-TWICE.md): spin up parallel sub-agents to design the interface several radically different ways, then compare on depth, locality, and seam placement.
+
+## Asking the user
+
+Find facts yourself. Bring the user only the decisions that change the outcome, all at once, each with your recommended answer. Never assume silently.
