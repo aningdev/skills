@@ -31,7 +31,7 @@ When something breaks, just describe it: `codebase-debug` loads on its own, find
 
 ## Which role when
 
-Roles are **called by hand** (`/name`); `codebase-*` skills **load on their own** when the situation calls for them.
+Call a role by name (`/name`) to have the agent take it on, or let the agent pick it up when the work matches; `codebase-*` skills load on their own when the situation calls for them.
 
 | You want to                                                                | Call                    | Conventions it draws on                                       |
 | -------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------- |

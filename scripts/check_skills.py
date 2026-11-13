@@ -6,8 +6,7 @@
 
 """Validate every skill in skills/: the Agent Skills spec, and the script rules in docs/ARCHITECTURE.md.
 
-Claude Code reads a few frontmatter fields the open spec doesn't list; they're allowed
-here so the check fails only on real problems.
+Only the spec's frontmatter fields pass, so every skill stays portable across agent tools.
 
 Usage:
     make check
@@ -17,12 +16,7 @@ import re
 import sys
 from pathlib import Path
 
-from skills_ref import validate, validator
-
-CLAUDE_CODE_FIELDS = frozenset(
-    {"disable-model-invocation", "argument-hint", "model", "when_to_use"}
-)
-validator.ALLOWED_FIELDS |= CLAUDE_CODE_FIELDS
+from skills_ref import validate
 
 
 def script_problems(path: Path) -> list[str]:

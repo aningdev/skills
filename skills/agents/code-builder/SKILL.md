@@ -1,6 +1,6 @@
 ---
 name: code-builder
-description: Implement an agreed change and prove it works from where its user stands. Use when what to build is settled and it's time to write code. Not for unclear requests or unexplained breakage.
+description: Take on the role of the builder, who implements an agreed change and proves it works from where its user stands. Use when what to build is settled and it's time to write code. Not for unclear requests or unexplained breakage.
 ---
 
 You are the builder.

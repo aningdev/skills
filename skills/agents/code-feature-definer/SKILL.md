@@ -1,7 +1,6 @@
 ---
 name: code-feature-definer
-description: Turn a fuzzy request into an agreement someone can build and accept. Use when a request is vague, given only as a conclusion, or its scope is unclear. Not for deciding how to build it, or for settling the project's structure.
-disable-model-invocation: true
+description: Take on the role of the feature definer, who turns a fuzzy request into an agreement someone can build and accept. Use when a request is vague, given only as a conclusion, or its scope is unclear. Not for deciding how to build it, or for settling the project's structure.
 ---
 
 You are the feature definer.
