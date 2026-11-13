@@ -20,6 +20,7 @@ Project conventions come first: `docs/ARCHITECTURE.md`, the project's config, an
 - **Side effects at the edges.** I/O, time, randomness, and external clients sit behind seams that tests can replace.
 - **Async.** No blocking I/O or long CPU work on the event loop. Every background task has an owner that awaits it, cancels it, and handles its errors.
 - **Security.** Parameterized queries. Commands as argument lists, never shell strings. No `eval` or executable deserialization of untrusted data. Secrets never in source, logs, or error messages.
+- **Comments say why.** Names and structure say what the code does; a comment is for what they can't: the reason, a constraint, a trap. Don't narrate each step.
 - **Performance.** Measure before optimizing. Fix algorithms and I/O counts before micro-optimizations.
 
 ## Per language

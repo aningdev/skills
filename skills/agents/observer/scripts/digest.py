@@ -51,7 +51,7 @@ STORE = HOME / ".agents" / "skills" / "observe-result" / ".observer"
 LIMIT = 6000  # characters kept per prompt or reply
 CLOSING = 300  # characters kept of an agent's closing words on a delivery
 # a reply that is a pasted log or an injected skill, not the user's words
-PASTED = re.compile(r"^\s*(?:[<{]|\S+\s*\|\s*\d{4}-\d\d-\d\d)")
+PASTED = re.compile(r"^\s*(?:[<{]|\d{4}-\d\d-\d\dT\d|\S+\s*\|\s*\d{4}-\d\d-\d\d)")
 
 # A round starts only where its marker opens a line (after any list, quote, heading, or table
 # markup) or a new sentence; a marker quoted mid-sentence isn't one. A grilling round keeps
@@ -356,7 +356,7 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
             continue
         said = "\n".join(t.text for t in turn if t.kind == "assistant")
         for source, marker in MARKERS.items():
-            if found := marker.search(said):
+            if found := find_marker(marker, said):
                 at = found.start()
                 open_round = {
                     **base,
@@ -384,11 +384,19 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
     said = "\n".join(t.text for t in turn if t.kind == "assistant")
     if turn and (
         any(t.kind == "edit" for t in turn)
-        or any(m.search(said) for m in MARKERS.values())
+        or any(find_marker(m, said) for m in MARKERS.values())
     ):
         # the last round is still waiting for its reply: resume at its question
         end = turn[0].line
     return rounds, end, False
+
+
+def find_marker(marker: re.Pattern[str], text: str) -> re.Match[str] | None:
+    """The first marker outside a fenced code block: one inside a fence is an example, not a round."""
+    for found in marker.finditer(text):
+        if text.count("```", 0, found.start()) % 2 == 0:
+            return found
+    return None
 
 
 def read_memories() -> Iterator[dict]:
