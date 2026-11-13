@@ -1,6 +1,6 @@
 ---
 name: codebase-setup
-description: Principles and recommended defaults for a project's engineering shell and for setting a repo up: toolchain, the check, fix, and test entry points, hooks, CI, moving conventions into tools, the files a project needs, and what AGENTS.md holds, plus an evidence-based check of an existing repo. Use when starting a project, setting up or re-checking a repo, changing its stack, or touching scripts, tool config, hooks, or CI. Not for proving a change does what was agreed (codebase-verify).
+description: Principles and recommended defaults for a project's engineering shell and for setting a repo up, covering toolchain, the check, fix, and test entry points, hooks, CI, moving conventions into tools, the files a project needs, and what AGENTS.md holds, plus an evidence-based check of an existing repo. Use when starting a project, setting up or re-checking a repo, changing its stack, or touching scripts, tool config, hooks, or CI. Not for proving a change does what was agreed (codebase-verify).
 ---
 
 # Codebase Setup

@@ -1,6 +1,6 @@
 ---
 name: codebase-docs
-description: Build and sharpen a project's docs: the domain model in docs/GLOSSARY.md, the architecture conventions in docs/ARCHITECTURE.md, and each feature's goals and acceptance criteria in docs/specs/. Use when discussing codebase terminology, tech choices, contexts, directory layout, layering, or seams, when pinning down what a feature must achieve before building it, or when writing or editing any of these files. Not for designing one module's interface (codebase-design) or PR descriptions (codebase-git).
+description: Build and sharpen a project's docs, the domain model in docs/GLOSSARY.md, the architecture conventions in docs/ARCHITECTURE.md, and each feature's goals and acceptance criteria in docs/specs/. Use when discussing codebase terminology, tech choices, contexts, directory layout, layering, or seams, when pinning down what a feature must achieve before building it, or when writing or editing any of these files. Not for designing one module's interface (codebase-design) or PR descriptions (codebase-git).
 ---
 
 # Codebase Docs

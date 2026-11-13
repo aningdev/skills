@@ -1,6 +1,6 @@
 ---
 name: codebase-review
-description: "Review a change along two separate axes: Standards (does it follow the project's conventions and language rules?) and Agreement (does it do what was agreed?). Runs both in fresh parallel sub-agents and reports them side by side. Use when reviewing a PR, a branch, or an area of the codebase, or gating a PR before it merges. Not for finding why something breaks (codebase-debug)."
+description: Review a change along two separate axes, Standards (does it follow the project's conventions and language rules?) and Agreement (does it do what was agreed?). Runs both in fresh parallel sub-agents and reports them side by side. Use when reviewing a PR, a branch, or an area of the codebase, or gating a PR before it merges. Not for finding why something breaks (codebase-debug).
 ---
 
 Two-axis review of a change:

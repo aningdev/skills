@@ -7,3 +7,6 @@
 [submodule "references/superpowers"]
 	path = references/superpowers
 	url = https://github.com/obra/superpowers.git
+[submodule "references/agentskills"]
+	path = references/agentskills
+	url = https://github.com/agentskills/agentskills.git

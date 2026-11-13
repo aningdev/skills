@@ -1,6 +1,6 @@
 ---
 name: codebase-verify
-description: Prove your own change does what was agreed before calling it done: walk each acceptance criterion as its user would, keep the evidence, script the walkthroughs worth repeating, and never claim done, fixed, or passing without fresh evidence. Use when you're about to call a change, a fix, or a config change done. Not for setting up checks, hooks, or CI (codebase-setup), or judging someone else's change (codebase-review).
+description: Prove your own change does what was agreed before calling it done. Walk each acceptance criterion as its user would, keep the evidence, script the walkthroughs worth repeating, and never claim done, fixed, or passing without fresh evidence. Use when you're about to call a change, a fix, or a config change done. Not for setting up checks, hooks, or CI (codebase-setup), or judging someone else's change (codebase-review).
 ---
 
 # Codebase Verify

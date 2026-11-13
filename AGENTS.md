@@ -7,6 +7,10 @@
 | `skills/office/` | 名词、办公产物                 | 待建                                                                                                                          |
 | `skills/agents/` | 身份、角色                     | code-feature-definer、code-architect、code-builder、code-reviewer                                                             |
 
+## 命令
+
+- `make check`：用 [skills-ref](references/agentskills/skills-ref/README.md) 按 Agent Skills 规范校验 `skills/` 下每个技能（frontmatter 走严格 YAML，冒号等问题会在这里报出）。首次使用先 `git submodule update --init references/agentskills`。改完技能先跑它。
+
 ## 何时读什么
 
 - 术语（Agreement、Walkthrough、Evidence……）：[docs/GLOSSARY.md](docs/GLOSSARY.md)
