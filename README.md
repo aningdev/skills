@@ -25,12 +25,12 @@
 
 角色要**手动调用**（敲 `/名字`），`codebase-*` 技能由 AI 按场景**自动加载**，不用手打。
 
-| 你想要                                 | 调用                    | 会自动用到的规范                                                              |
-| -------------------------------------- | ----------------------- | ----------------------------------------------------------------------------- |
-| 把一个想法说清楚，定下做成什么样算完成 | `/code-feature-definer` | codebase-docs                                                                 |
-| 新建项目、对齐规范、梳理结构、改工具链 | `/code-architect`       | codebase-setup、codebase-docs、codebase-design、codebase-git |
-| 按约定把功能做出来                     | `/code-builder`         | codebase-lang、codebase-design、codebase-verify、codebase-git                 |
-| 合并前把关                             | `/code-reviewer`        | codebase-review                                                               |
+| 你想要                                 | 调用                    | 会自动用到的规范                                              |
+| -------------------------------------- | ----------------------- | ------------------------------------------------------------- |
+| 把一个想法说清楚，定下做成什么样算完成 | `/code-feature-definer` | codebase-docs                                                 |
+| 新建项目、对齐规范、梳理结构、改工具链 | `/code-architect`       | codebase-setup、codebase-docs、codebase-design、codebase-git  |
+| 按约定把功能做出来                     | `/code-builder`         | codebase-lang、codebase-design、codebase-verify、codebase-git |
+| 合并前把关                             | `/code-reviewer`        | codebase-review                                               |
 
 ## 容易混的名字
 
