@@ -1,51 +1,82 @@
 # Skills
 
-个人技能库：`base`（方法论）、`codebase-*`（代码库规范）、`code-*`（角色）。术语见 [docs/GLOSSARY.md](docs/GLOSSARY.md)，分层见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
+[中文](README.zh.md)
 
-## 从需求到合并
+A personal library of agent skills for Claude Code, pi, and any agent that reads [Agent Skills](https://agentskills.io). Methods live in skills; roles add a stance and judgement on top; an observer learns how you decide and feeds it back.
+
+| Layer            | What's in it                                                                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `skills/base/`   | Methods that produce no deliverable of their own: `grilling`, `self-grilling`, `handoff`, `research`                                                                                                          |
+| `skills/code/`   | Conventions for every code repo, usable with no role installed: `codebase-setup`, `codebase-docs`, `codebase-design`, `codebase-lang`, `codebase-verify`, `codebase-debug`, `codebase-git`, `codebase-review` |
+| `skills/agents/` | Roles you call by name: `code-feature-definer`, `code-architect`, `code-builder`, `code-reviewer`, and the cross-domain `observer`                                                                            |
+
+Terms are in [docs/GLOSSARY.md](docs/GLOSSARY.md); layering and writing rules in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## From request to merge
 
 ```
-模糊的需求 ──► /code-feature-definer ──► Agreement（验收标准 + 例子）
-                    │ 涉及术语、栈、分层
+fuzzy request ──► /code-feature-definer ──► Agreement (acceptance criteria + examples)
+                    │ touches terms, stack, or layering
                     ▼
-               /code-architect ──► 约定、骨架、要修的清单
+               /code-architect ──► conventions, scaffolding, a list to fix
                     │
                     ▼
-               /code-builder ──► 实现 + 按用户路径走查 + Evidence ──► PR
-                                                                     │
-                                                                     ▼
-                                                              /code-reviewer ──► merge / not yet
+               /code-builder ──► implementation + walking each criterion as the user + Evidence ──► PR
+                                                                                                  │
+                                                                                                  ▼
+                                                                                   /code-reviewer ──► merge / not yet
 ```
 
-出了问题时直接描述现象，`codebase-debug` 会自动加载，查根因再修复。
+When something breaks, just describe it: `codebase-debug` loads on its own, finds the cause, then fixes it. Every step also works alone; a missing role leaves the others and the `codebase-*` skills working.
 
-每一步都可以单独用；缺了哪个角色，其余角色和 `codebase-*` 照样能工作。
+## Which role when
 
-## 什么时候用哪个角色
+Roles are **called by hand** (`/name`); `codebase-*` skills **load on their own** when the situation calls for them.
 
-角色要**手动调用**（敲 `/名字`），`codebase-*` 技能由 AI 按场景**自动加载**，不用手打。
+| You want to                                                                | Call                    | Conventions it draws on                                       |
+| -------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------- |
+| Pin down what to build and what "done" means                               | `/code-feature-definer` | codebase-docs                                                 |
+| Start a project, align it with conventions, shape its structure or tooling | `/code-architect`       | codebase-setup, codebase-docs, codebase-design, codebase-git  |
+| Build what was agreed                                                      | `/code-builder`         | codebase-lang, codebase-design, codebase-verify, codebase-git |
+| Gate a change before it merges                                             | `/code-reviewer`        | codebase-review                                               |
+| Audit how agents decide for you, and learn from it                         | `/observer`             |                                                               |
 
-| 你想要                                 | 调用                    | 会自动用到的规范                                              |
-| -------------------------------------- | ----------------------- | ------------------------------------------------------------- |
-| 把一个想法说清楚，定下做成什么样算完成 | `/code-feature-definer` | codebase-docs                                                 |
-| 新建项目、对齐规范、梳理结构、改工具链 | `/code-architect`       | codebase-setup、codebase-docs、codebase-design、codebase-git  |
-| 按约定把功能做出来                     | `/code-builder`         | codebase-lang、codebase-design、codebase-verify、codebase-git |
-| 合并前把关                             | `/code-reviewer`        | codebase-review                                               |
+## Teaching agents how you decide
 
-## 让 Agent 更懂你
+Every question an agent puts to you is a sample: which recommendations you take, which you override, which of its own calls you undo. Grilling rounds open with `🎯 [<role>] <goal>` and self-grilling hands off `Calls I made as <role>:`, so each decision says who made it. Now and then (session logs are kept 30 days by default) call `/observer`. It:
 
-grilling 和 self-grilling 里的每个决策都是样本：你采纳了哪些推荐、推翻了哪些、Agent 自己拍板的哪些被你改回来。隔一段时间（会话记录默认只留 30 天）调用 `/observer`，它会：
+1. Copies new question rounds and your replies from local Claude Code and pi sessions, plus Claude Code's feedback memories, with `scripts/digest.py`. Only what's new is read.
+2. Reads them and distills your principles (rule, why, how to apply, example, sightings) into the `observe-result` skill at `~/.agents/skills/observe-result/`, a regular skill every agent loads read-only, and that you can carry anywhere as one folder.
+3. Reports adoption, kept calls, and missed questions, plus proposals that crossed their threshold.
 
-1. 用 `scripts/digest.py` 把本机 Claude Code 和 pi 会话里的每一轮提问（grilling、AskUserQuestion、`Calls I made:`）连同你的回复原样存进 `~/.agents/skills/observe-result/.observer/`
-2. 自己读这些轮次，把被推翻的、漏问的提炼成你的判断原则，写进技能 `~/.agents/skills/observe-result/`。它是普通技能格式，可以整个文件夹带走，各个 Agent 在系统级加载、只读
-3. 报告 3 个指标（采纳率、自决保留率、漏问数）和达到门槛的改进提议
+Nothing is written until you confirm the report, and skills change only when you approve each proposal.
 
-都先出报告，你确认后才写入；改技能要你逐条批准。
+## Names that look alike
 
-## 容易混的名字
+| Name              | What it is                                                |
+| ----------------- | --------------------------------------------------------- |
+| `/code-reviewer`  | Role: the independent gate, gives merge / not yet         |
+| `codebase-review` | Convention: the two-axis review method, loads on its own  |
+| `/code-review`    | Claude Code's built-in command, unrelated to this library |
 
-| 名字              | 是什么                                 |
-| ----------------- | -------------------------------------- |
-| `/code-reviewer`  | 角色：独立把关人，给出 merge / not yet |
-| `codebase-review` | 规范：两轴评审的方法，自动加载         |
-| `/code-review`    | Claude Code 内置命令，与本库无关       |
+## Install
+
+```bash
+git clone --recurse-submodules <this repo>
+ln -s "$PWD/skills/code/codebase-setup" ~/.claude/skills/codebase-setup   # one link per skill, or use your skill manager
+make check   # validates every skill against the Agent Skills spec, plus script and Markdown rules
+```
+
+## Acknowledgements
+
+This library was built by reading, borrowing from, and internalising these projects. Thank you to their authors.
+
+- [mattpocock/skills](https://github.com/mattpocock/skills) (MIT)
+- [obra/superpowers](https://github.com/obra/superpowers) (MIT)
+- [tw93/Waza](https://github.com/tw93/Waza) (MIT)
+- [agentskills/agentskills](https://github.com/agentskills/agentskills) (Apache-2.0)
+- [huacnlee/noop](https://github.com/huacnlee/noop)
+
+## License
+
+[MIT](LICENSE)
