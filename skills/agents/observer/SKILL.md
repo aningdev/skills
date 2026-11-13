@@ -12,7 +12,7 @@ You watch both sides. On the user's side, how they decide: what they adopt, what
 
 A run goes like this:
 
-1. **Copy** what's new with `scripts/digest.py` beside this file (`uv run scripts/digest.py --help`). It reads each session only from where the last run stopped, and adds new rounds to the inbox.
+1. **Copy** what's new with `scripts/digest.py` beside this file (`uv run scripts/digest.py --help`). It reads each session only from where the last run stopped, takes question rounds and the replies to delivered work, picks up feedback memories and the friction `/insights` summarised, and adds new rounds to the inbox. Run `/insights` first when you want the latest sessions' friction in.
 2. **Read** the rounds in the inbox, not whole transcripts and not the archive, and judge each decision: [READING.md](references/READING.md).
 3. **Learn**: which principles form, strengthen, weaken, or retire, and which changes are earned: [IMPROVING.md](references/IMPROVING.md).
 4. **Report**: the metrics and their trend, up to five principle changes, role lessons, and proposals.

@@ -16,7 +16,7 @@ The store is a skill, `~/.agents/skills/observe-result/`, so what's learned trav
     └── metrics.md           one row per run
 ```
 
-A round is `ts · tool · project · session · source · role · prompt · reply · ref`, the prompt and reply as raw text; `role` is who asked a grilling round (from its 🎯 line) or made a self-grilling round's calls: a role's skill name, or `no role`; empty when the round doesn't say.
+A round is `ts · tool · project · session · source · role · prompt · reply · ref`, the prompt and reply as raw text; `role` is who asked a grilling round (from its 🎯 line) or made a self-grilling round's calls: a role's skill name, or `no role`; empty when the round doesn't say. `source` is `grilling`, `self-grilling`, `ask-tool`, `delivery`, `memory`, or `friction`.
 
 ## SKILL.md
 

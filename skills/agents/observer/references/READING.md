@@ -10,9 +10,12 @@ A round is a block of questions put to the user, with the reply that followed. R
 - **Self-decided** (`self-grilling`): each line under `Calls I made as <role>:`. Did the user keep the call, or undo or redirect it in what they said next? The round's `role` says who made it: what the user undoes again and again for one role is a lesson for `references/roles/<role>.md`, or for that role's mission.
 - **Missed**: a correction in a reply about something nobody asked. Rewrite it as the question that should have been asked, with the user's answer.
 - **Confirmed**: the user explicitly endorsing a choice that wasn't the obvious default ("yes, separate pages, not drawers"). It counts as a sighting just like an override: knowing what to keep matters as much as knowing what to stop. A plain "all yes" isn't one.
+- **Corrected** (`delivery`, `friction`): the user sending delivered work back. A `delivery` round is the agent's closing words after it changed files, and the user's raw reply. Most replies just carry on or ask for the next thing; those aren't decisions, skip them. One that trims, redoes, or redirects what was delivered is a decision the agent made without asking: rewrite it as the question that should have been asked, with what the user wanted instead. Replies are short; read them against the closing words, and open `ref` when that's not enough. A `friction` round is `/insights`'s one-line summary of a Claude Code session, a model's words, not the user's: use it to find corrections the delivery rounds missed, and check it in the session before leaning on its wording. Its kinds: `misunderstood_request`, `wrong_approach`, and `excessive_changes` are corrections to learn from; `buggy_code`, and model or API errors, are quality or the environment: count them, don't learn from them.
 - **Remembered** (`memory`): a feedback memory an agent already wrote during a session, one project at a time. Treat each as a sighting in that project, with its Why as the reason.
 
-Missed decisions only show up here when they surface in a reply to some round. Corrections made elsewhere in a session aren't copied into the store, so this count runs low; say so when you report it.
+Missed decisions show up in a reply to some round, a reply to a delivery, or a session's friction. Corrections given while the agent is still talking, without a file changed, can still slip by; say so when you report Missed.
+
+Judge only from explicit signals: what the user said, kept, or undid. Carrying on without comment isn't approval, and work an agent did on its own isn't something the user asked for.
 
 ## What's already recorded elsewhere
 
@@ -36,6 +39,6 @@ Count these while reading, for the rounds in this run:
 
 - **Adoption**: recommendations adopted, out of the asked decisions you could judge.
 - **Kept**: self-decided calls the user left alone, out of all self-decided calls.
-- **Missed**: corrections of things nobody asked.
+- **Missed**: corrections of things nobody asked, friction included, with the friction kinds counted.
 
 Leave out what you couldn't judge, and give the count of it.

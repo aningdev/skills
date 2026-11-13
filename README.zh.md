@@ -45,7 +45,7 @@
 
 Agent 问你的每一道题都是样本：你采纳了哪些推荐、推翻了哪些、它自己拍板的哪些被你改回来。grilling 每轮以 `🎯 [<角色>] <目标>` 开头，self-grilling 交付时写 `Calls I made as <角色>:`，所以每个决定都标明了是谁做的。隔一段时间（会话记录默认只留 30 天）调用 `/observer`，它会：
 
-1. 用 `scripts/digest.py` 把本机 Claude Code 和 pi 会话里的每一轮提问连同你的回复、以及 Claude Code 的 feedback 记忆拷出来，只读新增的部分。
+1. 用 `scripts/digest.py` 把本机 Claude Code 和 pi 会话里的每一轮提问连同你的回复、以及 Claude Code 的 feedback 记忆和 `/insights` 总结的摩擦拷出来，只读新增的部分。
 2. 读这些内容，把你的判断原则（规则、Why、How to apply、例子、出现次数）提炼进技能 `observe-result`（`~/.agents/skills/observe-result/`）。它是普通技能，各 Agent 只读加载，也可以整个文件夹带走。
 3. 报告采纳率、自决保留率、漏问数，以及达到门槛的改进提议。
 

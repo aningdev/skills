@@ -8,13 +8,18 @@
 
 A round is a block of questions an agent put to the user (a grilling round, an ask tool
 such as AskUserQuestion, or a self-grilling `Calls I made as <role>:` list) together with the
-user's reply, kept as raw text. Nothing is judged here: the observer reads the rounds and
+user's reply, kept as raw text. A turn in which the agent changed files is a round too, with
+source `delivery`: the agent's closing words and whatever the user said next, since that's
+where corrections of delivered work show up. Nothing is judged here: the observer reads the rounds and
 goes back to the session through `ref` when it needs more. Each agent tool has a reader
 in READERS; add one to support another tool.
 
 Feedback the agents already distilled during a session, Claude Code's per-project
 memory files of type `feedback`, is copied too, as rounds with source `memory`, so the
 observer can promote what several projects agree on and skip what one project keeps.
+So is the friction Claude Code's `/insights` already summarised per session (the cached
+facets in `~/.claude/usage-data/`), as rounds with source `friction`: corrections the user
+made after seeing a result, which no question round shows.
 
 Only what's new is read. Each session file is resumed from the byte offset where the last
 run stopped, and skipped when it hasn't grown. New rounds land in `inbox.jsonl`; once the
@@ -41,6 +46,9 @@ lazy import argparse
 HOME = Path.home()
 STORE = HOME / ".agents" / "skills" / "observe-result" / ".observer"
 LIMIT = 6000  # characters kept per prompt or reply
+CLOSING = 300  # characters kept of an agent's closing words on a delivery
+# a reply that is a pasted log or an injected skill, not the user's words
+PASTED = re.compile(r"^\s*(?:[<{]|\S+\s*\|\s*\d{4}-\d\d-\d\d)")
 
 # A round starts only where its marker opens a line (after any list, quote, heading, or table
 # markup) or a new sentence; a marker quoted mid-sentence isn't one. A grilling round keeps
@@ -52,6 +60,7 @@ MARKERS = frozendict(
     ),
     **{"self-grilling": re.compile(r"^Calls I made(?: as ([^:\n]+))?:", re.MULTILINE)},
 )
+EDITS = frozenset({"Edit", "Write", "MultiEdit", "NotebookEdit", "edit", "write"})
 NOISE = (
     "<agent-message",
     "<task-notification",
@@ -69,7 +78,7 @@ class Event:
     """One step of a session, in the shape every reader produces."""
 
     line: int
-    kind: str  # "user", "agent" (another agent writing as the user), "assistant", or "ask"
+    kind: str  # "user", "agent" (another agent writing as the user), "assistant", "ask", or "edit"
     text: str
     ts: str
     cwd: str
@@ -126,6 +135,8 @@ def read_claude(path: Path, offset: int) -> Iterator[Event]:
             for b in content:
                 if b.get("type") == "text" and b.get("text"):
                     yield Event(i, "assistant", b["text"], ts, cwd, ref)
+                elif b.get("type") == "tool_use" and b.get("name") in EDITS:
+                    yield Event(i, "edit", b["name"], ts, cwd, ref)
 
 
 def read_pi(path: Path, offset: int) -> Iterator[Event]:
@@ -153,8 +164,15 @@ def read_pi(path: Path, offset: int) -> Iterator[Event]:
             yield Event(
                 i, "agent" if "<file name=" in text else "user", text, ts, cwd, ref
             )
-        elif msg.get("role") == "assistant" and text:
-            yield Event(i, "assistant", text, ts, cwd, ref)
+        elif msg.get("role") == "assistant":
+            if text:
+                yield Event(i, "assistant", text, ts, cwd, ref)
+            if any(
+                b.get("type") == "toolCall" and b.get("name") in EDITS
+                for b in content or []
+                if isinstance(content, list)
+            ):
+                yield Event(i, "edit", "", ts, cwd, ref)
 
 
 READERS: frozendict[str, tuple[Path, Callable[[Path, int], Iterator[Event]]]] = (
@@ -176,7 +194,7 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
     open_round: dict | None = None  # a round still collecting the user's reply
     turn: list[Event] = []
     for e in events:
-        if e.kind == "assistant":
+        if e.kind in ("assistant", "edit"):
             open_round = None  # the reply is complete once the agent speaks again
             turn.append(e)
             continue
@@ -196,7 +214,7 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
         if open_round:
             open_round["reply"] = f"{open_round['reply']}\n{e.text}".strip()[:LIMIT]
             continue
-        said = "\n".join(t.text for t in turn)
+        said = "\n".join(t.text for t in turn if t.kind == "assistant")
         for source, marker in MARKERS.items():
             if found := marker.search(said):
                 at = found.start()
@@ -210,9 +228,23 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
                 }
                 rounds.append(open_round)
                 break
+        else:
+            if any(t.kind == "edit" for t in turn) and not PASTED.match(e.text):
+                open_round = {
+                    **base,
+                    "source": "delivery",
+                    "prompt": said[
+                        -CLOSING:
+                    ],  # the agent's closing words on what it did
+                    "reply": e.text[:LIMIT],
+                    "ref": f"{path}#{turn[-1].ref}",
+                }
+                rounds.append(open_round)
         turn = []
-    if turn and any(
-        m.search("\n".join(t.text for t in turn)) for m in MARKERS.values()
+    said = "\n".join(t.text for t in turn if t.kind == "assistant")
+    if turn and (
+        any(t.kind == "edit" for t in turn)
+        or any(m.search(said) for m in MARKERS.values())
     ):
         # the last round is still waiting for its reply: resume at its question
         end = turn[0].line
@@ -240,6 +272,32 @@ def read_memories() -> Iterator[dict]:
             "source": "memory",
             "prompt": f"{fields.get('name', '')}: {fields.get('description', '')}",
             "reply": body.strip()[:LIMIT],
+        }
+
+
+def read_facets() -> Iterator[dict]:
+    """Yield each session `/insights` found friction in: what the user wanted, and what went wrong."""
+    usage = HOME / ".claude" / "usage-data"
+    for path in sorted((usage / "facets").glob("*.json")):
+        try:
+            facet = json.loads(path.read_text())
+            meta_file = usage / "session-meta" / path.name
+            meta = json.loads(meta_file.read_text()) if meta_file.exists() else {}
+        except json.JSONDecodeError:
+            continue
+        if not facet.get("friction_detail"):
+            continue
+        kinds = ", ".join(facet.get("friction_counts", {}))
+        yield {
+            "ts": meta.get("start_time", ""),
+            "tool": "claude-insights",
+            "project": meta.get("project_path", ""),
+            "session": facet.get("session_id", path.stem)[:8],
+            "role": "",
+            "ref": str(path),
+            "source": "friction",
+            "prompt": f"{facet.get('underlying_goal', '')} [{kinds}]",
+            "reply": facet["friction_detail"][:LIMIT],
         }
 
 
@@ -307,7 +365,10 @@ def main() -> int:
                     known.add(key)
                     found.append(r)
             state[str(path)] = {"offset": end, "agent": by_agent}
-    for r in read_memories():  # a memory reappears only when its text changes
+    for r in (
+        *read_memories(),
+        *read_facets(),
+    ):  # each reappears only when its text changes
         key = hashlib.sha1(
             f"{r['source']}{r['prompt']}{r['reply']}".encode()
         ).hexdigest()[:12]
