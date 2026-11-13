@@ -48,7 +48,7 @@ Keep both reports short and quote what they're judging.
 
 ### 6. Report
 
-Present the two reports under `## Standards` and `## Agreement`, lightly cleaned. Do **not** merge or rerank across the axes. End with one line: findings per axis, and the worst issue within each. For a PR, then give the verdict: **merge**, or **not yet** with what stands in the way.
+Before presenting, check every finding against the tree: the `file:line` exists and the quoted code is there. Drop what doesn't match, and say how many you dropped. Then present the two reports under `## Standards` and `## Agreement`, lightly cleaned. Do **not** merge or rerank across the axes. End with one line: findings per axis, and the worst issue within each. For a PR, then give the verdict: **merge**, or **not yet** with what stands in the way.
 
 Findings are a report, not a fix: don't change the code. Post them to the PR only when the user asks.
 
