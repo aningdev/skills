@@ -1,4 +1,4 @@
-.PHONY: check fix push
+.PHONY: check fix
 
 # Read-only: skills against the spec and script rules, Python lint and format, Markdown/JSON format.
 check:
@@ -12,9 +12,3 @@ fix:
 	uvx ruff check --fix --quiet skills scripts
 	uvx ruff format --quiet skills scripts
 	bunx oxfmt
-
-# push, give GitHub a moment, then have magpie fetch this repo's skills again
-push:
-	git push
-	sleep 15
-	uv run --quiet scripts/update_skills.py
