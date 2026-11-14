@@ -19,7 +19,7 @@ flowchart TD
 - `skills/base/`：动词、方法论，自身不产出交付物（grilling、self-grilling、handoff、research）
 - `skills/code/`：`codebase-*`，名词、工程规范，装进每个项目仓库
 - `skills/office/`：`office-*`，名词、办公产物（待建）
-- `skills/agents/`：`code-*` 等 Role，以及跨领域的 `observer`，可选安装
+- `skills/agents/`：`code-*` 等 Role，以及跨领域的 `advisor`、`observer`，可选安装
 - `references/`：外部参考仓库（submodule），只读
 
 ## Skill 与 Role 的分工
@@ -30,7 +30,7 @@ flowchart TD
 
 ## 写法
 
-- **命名**：Skill 用 `<领域>-<一个名词>`（`codebase-verify`）；Role 用 `<领域>-<角色名词>`（`code-builder`），需要时三个词（`code-feature-definer`）；跨领域的 Role 不加前缀（`observer`）。
+- **命名**：Skill 用 `<领域>-<一个名词>`（`codebase-verify`）；Role 用 `<领域>-<角色名词>`（`code-builder`），需要时三个词（`code-feature-definer`）；跨领域的 Role 不加前缀（`advisor`、`observer`）。
 - **description**：做什么。Use when …。Not for …。
 - **写目标与原则，不写死规矩**：目标是标准，做法是推荐；AI 自己知道或推得出的命令、参数、配置不写；项目换了做法，在它的 `docs/ARCHITECTURE.md` 记原因。
 - **提问协议**：能查到的事实自己查；只有会改变产出的决策交给用户，一次问清，每个附推荐答案；不默默假设。

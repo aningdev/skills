@@ -8,7 +8,7 @@
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `skills/base/`   | 方法论，自身不产出交付物：`grilling`、`self-grilling`、`handoff`、`research`                                                                                                          |
 | `skills/code/`   | 每个代码仓库的规范，不装角色也能独立用：`codebase-setup`、`codebase-docs`、`codebase-design`、`codebase-lang`、`codebase-verify`、`codebase-debug`、`codebase-git`、`codebase-review` |
-| `skills/agents/` | 按名字调用的角色：`code-feature-definer`、`code-architect`、`code-builder`、`code-reviewer`，以及跨领域的 `observer`                                                                  |
+| `skills/agents/` | 按名字调用的角色：`code-feature-definer`、`code-architect`、`code-builder`、`code-reviewer`，以及跨领域的 `advisor`、`observer`                                                       |
 
 术语见 [docs/GLOSSARY.md](docs/GLOSSARY.md)，分层与写法见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
@@ -33,13 +33,14 @@
 
 角色可以按名字调用（敲 `/名字`）让 Agent 代入，也可以由 Agent 在工作对得上时自己代入；`codebase-*` 技能由 AI 按场景**自动加载**。
 
-| 你想要                                  | 调用                    | 会用到的规范                                                  |
-| --------------------------------------- | ----------------------- | ------------------------------------------------------------- |
-| 把一个想法说清楚，定下做成什么样算完成  | `/code-feature-definer` | codebase-docs                                                 |
-| 新建项目、对齐规范、梳理结构、改工具链  | `/code-architect`       | codebase-setup、codebase-docs、codebase-design、codebase-git  |
-| 按约定把功能做出来                      | `/code-builder`         | codebase-lang、codebase-design、codebase-verify、codebase-git |
-| 合并前把关                              | `/code-reviewer`        | codebase-review                                               |
-| 审计 Agent 替你做决定的情况，并从中学习 | `/observer`             |                                                               |
+| 你想要                                       | 调用                    | 会用到的规范                                                  |
+| -------------------------------------------- | ----------------------- | ------------------------------------------------------------- |
+| 讨论一件事、了解情况、帮你做决定，不限于代码 | `/advisor`              |                                                               |
+| 把一个想法说清楚，定下做成什么样算完成       | `/code-feature-definer` | codebase-docs                                                 |
+| 新建项目、对齐规范、梳理结构、改工具链       | `/code-architect`       | codebase-setup、codebase-docs、codebase-design、codebase-git  |
+| 按约定把功能做出来                           | `/code-builder`         | codebase-lang、codebase-design、codebase-verify、codebase-git |
+| 合并前把关                                   | `/code-reviewer`        | codebase-review                                               |
+| 审计 Agent 替你做决定的情况，并从中学习      | `/observer`             |                                                               |
 
 ## 让 Agent 更懂你
 
@@ -53,11 +54,12 @@ Agent 问你的每一道题都是样本：你采纳了哪些推荐、推翻了�
 
 ## 容易混的名字
 
-| 名字              | 是什么                                 |
-| ----------------- | -------------------------------------- |
-| `/code-reviewer`  | 角色：独立把关人，给出 merge / not yet |
-| `codebase-review` | 规范：两轴评审的方法，自动加载         |
-| `/code-review`    | Claude Code 内置命令，与本库无关       |
+| 名字                          | 是什么                                                               |
+| ----------------------------- | -------------------------------------------------------------------- |
+| `/code-reviewer`              | 角色：独立把关人，给出 merge / not yet                               |
+| `codebase-review`             | 规范：两轴评审的方法，自动加载                                       |
+| `/code-review`                | Claude Code 内置命令，与本库无关                                     |
+| `advisor`（Claude Code 工具） | Claude Code 内置的第二意见工具；本库的 `/advisor` 是帮你做决定的角色 |
 
 ## 安装
 

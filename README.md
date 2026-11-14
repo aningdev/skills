@@ -8,7 +8,7 @@ A personal library of agent skills for Claude Code, pi, and any agent that reads
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `skills/base/`   | Methods that produce no deliverable of their own: `grilling`, `self-grilling`, `handoff`, `research`                                                                                                          |
 | `skills/code/`   | Conventions for every code repo, usable with no role installed: `codebase-setup`, `codebase-docs`, `codebase-design`, `codebase-lang`, `codebase-verify`, `codebase-debug`, `codebase-git`, `codebase-review` |
-| `skills/agents/` | Roles you call by name: `code-feature-definer`, `code-architect`, `code-builder`, `code-reviewer`, and the cross-domain `observer`                                                                            |
+| `skills/agents/` | Roles you call by name: `code-feature-definer`, `code-architect`, `code-builder`, `code-reviewer`, and the cross-domain `advisor` and `observer`                                                              |
 
 Terms are in [docs/GLOSSARY.md](docs/GLOSSARY.md); layering and writing rules in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
@@ -35,6 +35,7 @@ Call a role by name (`/name`) to have the agent take it on, or let the agent pic
 
 | You want to                                                                | Call                    | Conventions it draws on                                       |
 | -------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------- |
+| Talk something through, understand it, and decide, in code or not          | `/advisor`              |                                                               |
 | Pin down what to build and what "done" means                               | `/code-feature-definer` | codebase-docs                                                 |
 | Start a project, align it with conventions, shape its structure or tooling | `/code-architect`       | codebase-setup, codebase-docs, codebase-design, codebase-git  |
 | Build what was agreed                                                      | `/code-builder`         | codebase-lang, codebase-design, codebase-verify, codebase-git |
@@ -53,11 +54,12 @@ Nothing is written until you confirm the report, and skills change only when you
 
 ## Names that look alike
 
-| Name              | What it is                                                |
-| ----------------- | --------------------------------------------------------- |
-| `/code-reviewer`  | Role: the independent gate, gives merge / not yet         |
-| `codebase-review` | Convention: the two-axis review method, loads on its own  |
-| `/code-review`    | Claude Code's built-in command, unrelated to this library |
+| Name                         | What it is                                                                                    |
+| ---------------------------- | --------------------------------------------------------------------------------------------- |
+| `/code-reviewer`             | Role: the independent gate, gives merge / not yet                                             |
+| `codebase-review`            | Convention: the two-axis review method, loads on its own                                      |
+| `/code-review`               | Claude Code's built-in command, unrelated to this library                                     |
+| `advisor` (Claude Code tool) | Claude Code's built-in second-opinion tool; `/advisor` here is the role that helps you decide |
 
 ## Install
 
