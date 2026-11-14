@@ -9,7 +9,7 @@ Project conventions come first: `docs/ARCHITECTURE.md`, the project's config, an
 
 ## Before writing
 
-- Read the toolchain config (`pyproject.toml`, `Cargo.toml`, `package.json`) for the language version, formatter, linter, type checker, and async runtime. Don't use syntax or APIs the declared version doesn't support.
+- Read the toolchain config (`pyproject.toml`, `Cargo.toml`, `package.json`) for the language version, formatter, linter, type checker, and async runtime. Don't use syntax or APIs the declared version doesn't support, and within it, write the newest syntax and idioms it offers rather than older patterns kept out of habit.
 - Training data goes stale. When unsure about a framework or an API, check the official docs, not memory.
 
 ## Every language

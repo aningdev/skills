@@ -16,6 +16,7 @@ Project choices come first. A project that already decided keeps its decision.
 - **One tool per job, one config home.** One formatter, one linter, one type checker, one test runner, and their config in the project's main manifest or tool config file. No overlapping tools, and no stray per-tool config files when the main file can hold it.
 - **Every file is formatted.** Code is formatted by its language's formatter. Docs and config (Markdown, JSON, YAML) are formatted too, by the same tool in every repo.
 - **One entry point, three names.** Every project exposes `check`, `fix`, and `test`, whatever runs behind them. Their contract is in [CHECKS-AND-CI.md](references/CHECKS-AND-CI.md).
+- **Start from the latest stable.** A new project or dependency takes the latest stable release of its language, toolchain, or package: it carries the most fixes, optimizations, and features. When you touch an outdated one, propose the upgrade, read its release notes for breaking changes, and run the checks after. Pre-releases only when asked.
 - **Pin what installs.** One lockfile per repo, committed, and CI installs from it.
 
 ## Recommended toolchains
