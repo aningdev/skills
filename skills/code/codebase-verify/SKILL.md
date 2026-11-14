@@ -22,7 +22,9 @@ Verification is the author's own proof, before anyone else looks: the change doe
 
 **Scale it to the change.** A typo fix needs a glance at the result; a new flow needs every criterion walked with evidence. Let the size and risk of the change decide how much walking and evidence it gets.
 
-**Walk it somewhere disposable.** A walkthrough or test never reads or writes the user's real data, home directory, or services; point it at a temporary directory or a sandbox, and check that it did before trusting the result.
+**Climb from narrow to full.** While iterating, run only the narrowest check that covers what you changed; run the full suite once, at the end, with the same command and target the change will be judged by. A check that fails intermittently twice is a finding: stop and report it, don't chase it.
+
+**Walk it somewhere disposable.** A walkthrough or test never reads or writes the user's real data, home directory, or services; point it at a temporary directory or a sandbox, and check that it did before trusting the result. Stop only the processes you started, by their PID, never by name. Logs and scratch files stay inside the working directory and are gone when you finish. Every wait has a timeout and a path for when it fails.
 
 **When you can't walk it**, because you lack a browser, credentials, or a running environment, say exactly what's missing, mark the criterion manual, and hand the walk to the user. Never let something else stand in for the evidence.
 

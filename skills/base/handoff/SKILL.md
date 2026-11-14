@@ -11,6 +11,12 @@ Do not duplicate content already captured in other artifacts (docs, plans, issue
 
 Carry acceptance criteria verbatim: never summarise them.
 
+Whoever picks it up, a delegate, a peer, or a later you, should be able to work without coming back to ask:
+
+- **Say what done looks like, and what proves it.** The criteria, and the evidence that would show each is met, without assuming who checks.
+- **Write out the rules that matter.** Your context doesn't travel with the document. Name skills if they help, but spell out the few rules this work must follow; a list of names alone gets skipped.
+- **Say where the result goes back.** A file, a branch, or who to reply to. Handing the result back is a handoff too.
+
 Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
 
 If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
