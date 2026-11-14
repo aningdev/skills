@@ -48,3 +48,5 @@ Principles:
 **Why:** prose gets skimmed and forgotten; a failing check doesn't. Names, seams, and where a module belongs need judgement; import boundaries, generated-file rules, and banned APIs don't.
 
 **A way that works:** encode the convention (a lint rule, an ignore pattern, a step behind `check`), break it once to see the check fail, then shrink its line in `docs/ARCHITECTURE.md` to a pointer at the rule, or delete it.
+
+One worth having in every repo: **the layout is a check.** A top-level folder that `## Layout` in `docs/ARCHITECTURE.md` doesn't list fails `check`, so no folder appears without someone deciding where it belongs.

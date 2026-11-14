@@ -1,11 +1,20 @@
 ---
 name: codebase-git
-description: Goals and recommended practices for how changes are committed, branched, merged, and described. Use when writing a commit message, naming a branch, opening or merging a PR, or writing a PR description. Not for reviewing a PR (codebase-review).
+description: Goals and recommended practices for how changes are scoped, committed, branched, merged, and described. Use when scoping a change, writing a commit message, naming a branch, opening or merging a PR, or writing a PR description. Not for reviewing a PR (codebase-review).
 ---
 
 # Codebase Git
 
 History is read by people and agents who weren't there. The goal: from `git log` alone, anyone can tell what changed and where; from a PR alone, what was agreed and whether it was met. The practices below are recommendations that serve that goal. A project can choose otherwise and record why in `docs/ARCHITECTURE.md`.
+
+## Changes
+
+**Goal:** every change can be read in one sitting, and leaves nothing behind it that it replaced.
+
+Principles:
+
+- **One concern per change.** A PR does one thing a reviewer can take in at once; when it grows past that, split it.
+- **Delete in the same change.** What the change supersedes goes with it: old code, files, flags, and docs. No commented-out code, no `_v2`, `_old`, or `_new` copies, no old and new paths kept side by side. When a migration really needs both for a while, the change says when the old one goes.
 
 ## Commits
 
