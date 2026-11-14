@@ -62,7 +62,7 @@ Agent 问你的每一道题都是样本：你采纳了哪些推荐、推翻了�
 ## 安装
 
 ```bash
-git clone --recurse-submodules <本仓库>
+git clone --recurse-submodules https://github.com/aningdev/skills.git
 ln -s "$PWD/skills/code/codebase-setup" ~/.claude/skills/codebase-setup   # 每个技能一个链接，或用你的技能管理工具
 make check   # 按 Agent Skills 规范校验每个技能，并检查脚本与 Markdown 规则
 ```

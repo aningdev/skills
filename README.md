@@ -62,7 +62,7 @@ Nothing is written until you confirm the report, and skills change only when you
 ## Install
 
 ```bash
-git clone --recurse-submodules <this repo>
+git clone --recurse-submodules https://github.com/aningdev/skills.git
 ln -s "$PWD/skills/code/codebase-setup" ~/.claude/skills/codebase-setup   # one link per skill, or use your skill manager
 make check   # validates every skill against the Agent Skills spec, plus script and Markdown rules
 ```
