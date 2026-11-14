@@ -17,7 +17,7 @@ Verification is the author's own proof, before anyone else looks: the change doe
 
 1. **Do what the user would do.** Run the real thing and walk the criterion's path, with realistic data, including the paths they'd hit when things go wrong.
 2. **Look where they'd look.** Judge by what the user sees, not internal state.
-3. **Keep the evidence**, before and after. It goes in the PR's `## Evidence`.
+3. **Keep the evidence**, before and after. It goes in the PR's `## Evidence`, or the commit body when the branch merges without one.
 4. **Script the walkthroughs worth repeating.** When a criterion guards something that could quietly break again, turn its walkthrough into a script that drives the same public surface and runs under `test`, so CI walks it on every change. A one-off check can stay manual, with its evidence.
 
 **Scale it to the change.** A typo fix needs a glance at the result; a new flow needs every criterion walked with evidence. Let the size and risk of the change decide how much walking and evidence it gets.
