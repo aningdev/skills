@@ -85,6 +85,11 @@ NOISE = (
     "<command-message>",
     "Caveat:",
     "Base directory for this skill",
+    "This session is being continued from a previous conversation",
+)
+# a session started by handing it a brief, as a file or as a skill command over one, is run by an agent
+BRIEFED = re.compile(
+    r"<file name=|^<skill name=[\s\S]*(?:BRIEF|\.handoff/|handoff|交接)"
 )
 
 
@@ -205,7 +210,7 @@ def read_pi(path: Path, offset: int) -> Iterator[Event]:
             ].strip()  # a delegate's report appended after the user's words
         if msg.get("role") == "user" and text:
             yield Event(
-                i, "agent" if "<file name=" in text else "user", text, ts, cwd, ref
+                i, "agent" if BRIEFED.search(text) else "user", text, ts, cwd, ref
             )
         elif msg.get("role") == "assistant":
             if text:
