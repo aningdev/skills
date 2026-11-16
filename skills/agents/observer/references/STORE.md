@@ -40,7 +40,7 @@ Why carries the user's reason, in their words where short. How to apply says whe
 
 ## references/roles/<role>.md
 
-The same entry shape, about how one role decides: what the user keeps correcting it on, and what it gets right.
+The same entry shape, about how one role decides: what the user keeps correcting it on, what it gets right, and under a `## Settled` heading, the calls it keeps grilling for nothing, each with what settles it.
 
 ## .observer/candidates.md
 
@@ -58,9 +58,9 @@ Tick an entry once the user approves and it's applied; delete one they decline.
 ## .observer/metrics.md
 
 ```md
-| Run        | Rounds | Adoption   | Kept  | Missed | Unjudged |
-| ---------- | ------ | ---------- | ----- | ------ | -------- |
-| 2026-11-13 | 244    | 72% (est.) | — (0) | 6      | 0        |
+| Run        | Rounds | Adoption   | Kept  | Noise | Missed | Unjudged |
+| ---------- | ------ | ---------- | ----- | ----- | ------ | -------- |
+| 2026-11-13 | 244    | 72% (est.) | — (0) | — (0) | 6      | 0        |
 ```
 
 Keep each file under 200 lines. No long quotes, secrets, or private people's data.

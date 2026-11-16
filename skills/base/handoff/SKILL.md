@@ -15,7 +15,7 @@ Whoever picks it up, a delegate, a peer, or a later you, should be able to work 
 
 - **Say what done looks like, and what proves it.** The criteria, and the evidence that would show each is met, without assuming who checks.
 - **Write out the rules that matter.** Your context doesn't travel with the document. Name skills if they help, but spell out the few rules this work must follow; a list of names alone gets skipped.
-- **Say where the result goes back.** A file, a branch, or who to reply to. Handing the result back is a handoff too.
+- **Say where the result goes back.** A file, a branch, or who to reply to. Handing the result back is a handoff too. Ask for the `Calls I made as <role>:` list in it, so whoever reads the result sees the calls made without them; when you're the one handing back, put that list in it, and when you pass a result on, pass its list on word for word, as plain top-level text.
 
 Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
 

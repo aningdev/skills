@@ -61,7 +61,11 @@ MARKERS = frozendict(
         r"(?:^[ \t>*#|-]*|(?<=[。！？.!?] ))(?:🎯\s*(?:\[([^\]\n]+)\])?.*\n+[ \t>*#|-]*)?❓",
         re.MULTILINE,
     ),
-    **{"self-grilling": re.compile(r"^Calls I made(?: as ([^:\n]+))?:", re.MULTILINE)},
+    **{
+        "self-grilling": re.compile(
+            r"^[ \t>*#|-]*Calls I made(?: as ([^:\n*]+))?:", re.MULTILINE
+        )
+    },
 )
 EDITS = frozenset(
     {

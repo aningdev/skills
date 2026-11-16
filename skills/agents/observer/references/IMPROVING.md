@@ -14,6 +14,7 @@ How decisions become principles, and principles become changes.
 
 - **Strengthen** it when a later decision goes the same way, adopted recommendations included: add the sighting, update the date and sources, and sharpen its Why or How to apply if the new case adds to them.
 - **Weaken** it when a decision goes against it: report the conflict for the user to settle, never overwrite the principle quietly.
+- **Settle** the calls a role keeps grilling for nothing: Noise of the same kind for one role, seen in two sessions, becomes a settled entry in `references/roles/<role>.md`, saying what's settled and why, so the role names it in one line instead of grilling it again. Noise that one principle or doc already settles needs no entry; it's the role not reading what's there, which is a lesson for its mission if it keeps happening.
 - **Retire** it when the user overturns it, or when nothing has touched it in a long while and the user agrees it no longer holds.
 
 Edit one entry at a time; never rewrite the file whole.

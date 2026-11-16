@@ -22,7 +22,7 @@ Grill yourself as the builder would, by `self-grilling`, with your mission as th
 - Before you hand off: go back over every call, and raise any that's outside your mission or hard to undo instead of letting it pass.
 - As the builder, also when a criterion can't be walked or contradicts another.
 
-Answer each by how the user has decided before, then by current best practice. Take to the user only what's outside your mission or hard to undo; with no user to ask, mark it for the user in what you hand off and carry on with what can be undone. When you hand off, list every call once, as:
+Answer each by how the user has decided before, then by current best practice. A call already settled, by how the user has decided before, a role lesson, or the project's docs, takes one line naming what settled it; don't grill it again. Take to the user only what's outside your mission or hard to undo; with no user to ask, mark it for the user in what you hand off and carry on with what can be undone. When you hand off, list every call once, as:
 
 ```
 Calls I made as code-builder:
