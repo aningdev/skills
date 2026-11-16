@@ -4,7 +4,7 @@
 # dependencies = []  # skills-ref comes from the submodule: see `make check`
 # ///
 
-"""Validate every skill in skills/: the Agent Skills spec, and the script rules in docs/ARCHITECTURE.md.
+"""Validate every skill in skills/: the Agent Skills spec, and the script and role rules in docs/ARCHITECTURE.md.
 
 Only the spec's frontmatter fields pass, so every skill stays portable across agent tools.
 
@@ -40,9 +40,25 @@ def script_problems(path: Path) -> list[str]:
     return problems
 
 
+def grilling_problems(role: Path, moments: list[str]) -> list[str]:
+    """Return what a role is missing of the self-grilling points, answer rule, and calls format it must embed."""
+    text = role.read_text()
+    problems = [
+        f"self-grilling text not embedded verbatim: {m[:50]}…"
+        for m in moments
+        if m not in text
+    ]
+    if f"Calls I made as {role.parent.name}:" not in text:
+        problems.append(f"no `Calls I made as {role.parent.name}:` format")
+    return problems
+
+
 def main() -> int:
     """Validate skills and their scripts, and print a summary."""
     skills = sorted(Path("skills").glob("*/*/SKILL.md"))
+    grilling = Path("skills/base/self-grilling/SKILL.md").read_text()
+    body = grilling.split("at three points:", 1)[1]
+    moments = re.findall(r"^(?:- |Answer each by ).+$", body, re.MULTILINE)
     failed = 0
     for skill in skills:
         scripts = [
@@ -53,7 +69,10 @@ def main() -> int:
         script_issues = [
             *(f"{s.name}: {p}" for p in script_problems(s)) for s in scripts
         ]
-        problems = [*validate(skill.parent), *script_issues]
+        role_issues = (
+            grilling_problems(skill, moments) if skill.parts[1] == "agents" else []
+        )
+        problems = [*validate(skill.parent), *script_issues, *role_issues]
         if problems:
             failed += 1
             print(f"✗ {skill.parent}", file=sys.stderr)
