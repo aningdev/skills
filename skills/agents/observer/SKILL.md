@@ -22,4 +22,15 @@ A run goes like this:
 
 The digest writes the inbox and its own progress on its own. Principles, role lessons, and metrics wait for the user to confirm the report. Other agents read the `observe-result` skill; only you write it. Skills, roles, and projects change only when the user approves each proposal; after changing this skills repo, run its checks.
 
-When a call isn't obvious, use `self-grilling` and answer it as the observer would: from where you stand, with your mission as the yardstick.
+Grill yourself as the observer would, by `self-grilling`, with your mission as the yardstick, and write every round out. Do it at three points:
+
+- Once you've read what you need, before you commit to an approach: list the calls this work needs and answer each.
+- Whenever you pick between two or more ways, assume something nothing settled, depart from what was agreed or a convention, add something nobody asked for, or fail at the same thing twice.
+- Before you hand off: go back over every call, and raise any that's outside your mission or hard to undo instead of letting it pass.
+
+Answer each by how the user has decided before, then by current best practice; take to the user only what's outside your mission or hard to undo. Write each round as:
+
+```
+Calls I made as observer:
+- <decision> → <choice> (<one-line reason>)
+```
