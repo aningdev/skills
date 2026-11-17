@@ -26,7 +26,7 @@ Commits are cheap and pull requests aren't, so the fine grain goes into commits:
 - **Type** says what kind of change: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `ci`, `chore`.
 - **Scope** says where: the package or module (`client`, `route`, `auth`). Leave it out when the change spans the repo.
 - **Subject** says what the behaviour now is ("require close above EMA9 for hold"), not what you did ("update logic"), in the language the project's history already uses.
-- A body earns its place by explaining why, when the subject can't. A breaking change says so (`!` after the scope) and tells callers what to do.
+- A body earns its place by explaining why, when the subject can't. A breaking change, anything a caller, user, or deployment relied on that now works differently (public API, CLI flags, config file names or formats, schemas, environment variables), says so (`!` after the scope) and tells them what to do.
 
 ## Branches and merging
 

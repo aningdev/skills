@@ -1,0 +1,199 @@
+{
+  "skill_name": "codebase-git",
+  "evals": [
+    {
+      "id": "codebase-git-001",
+      "prompt": "I've just swapped our auth module from session cookies to JWTs — it touches the login route, the session middleware, and the auth docs. I also fixed a typo in the README while I was in there. How should I split this into commits, what should I call the branch, and what should the commit messages and PR description say?",
+      "expected_output": "A plan that puts the JWT migration and the unrelated README typo in separate commits, removes the old session middleware in the same commit that introduces JWTs instead of keeping both, names a short-lived branch after the auth scope and JWT topic, writes type(scope): subject messages whose subjects describe the resulting behaviour, marks the session removal as breaking with what callers must do, and gives a PR description that states the goal and how each criterion is accepted.",
+      "assertions": [
+        "Splits the work into at least two commits: the JWT migration (including removal of the old session code) and the README typo",
+        "Removes the old session middleware in the same commit that introduces JWTs rather than keeping old and new paths side by side",
+        "Proposes a branch name that shows both scope and topic, such as auth/jwt-tokens",
+        "Commit messages use type(scope): subject form, with subjects describing the resulting behaviour rather than the work done",
+        "Marks the session removal as a breaking change and says what callers must do",
+        "The PR description states the goal of the change"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-002",
+      "prompt": "Please commit my uncommitted work. My working copy is recreated by a setup script: run `sh input/mixed-changes/setup.sh` from your working directory (the input folder may be at /workspace/input), then commit what's in the resulting ./invoicer repo. Don't push.",
+      "expected_output": "The uncommitted changes in ./invoicer end up committed as separate commits, one per concern: the invoice discount feature with its test, the rounding fix in money.py with its test, and the README typo fix, each with a type(scope): subject message that describes the resulting behaviour, matching the repo's existing English Conventional Commits style. Nothing is pushed.",
+      "assertions": [
+        "Creates at least three commits rather than one commit holding all the changes",
+        "The discount change to invoice.py is committed together with its test, separately from the rounding fix in money.py",
+        "The README typo fix is in its own commit, typed docs",
+        "Every new commit message uses type(scope): subject form in English, matching the existing history",
+        "Commit subjects describe the resulting behaviour (for example applying a discount, rounding half up) rather than saying 'update' or 'changes'",
+        "Does not push or rewrite the existing commits"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": ["files/mixed-changes"]
+    },
+    {
+      "id": "codebase-git-003",
+      "prompt": "Commit my fix. My working copy is recreated by a setup script: run `sh input/zh-history/setup.sh` from your working directory (the input folder may be at /workspace/input), then commit the uncommitted change in the resulting ./notes-cli repo. Don't push.",
+      "expected_output": "One commit holding the change to notes.py, with a type(scope): subject message whose subject is written in Chinese like the rest of the repo's history and describes the new behaviour: `notes add` without text or with another subcommand now prints usage and exits non-zero instead of writing an empty line.",
+      "assertions": [
+        "Creates exactly one new commit containing the notes.py change",
+        "The commit subject is written in Chinese, matching the language of the existing history",
+        "The commit message uses type(scope): subject form, such as fix(cli): ...",
+        "The subject describes the resulting behaviour (refusing an empty or unknown command) rather than the work done"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": ["files/zh-history"]
+    },
+    {
+      "id": "codebase-git-004",
+      "prompt": "I moved our service from a JSON config to TOML. My working copy is recreated by a setup script: run `sh input/replace-loader/setup.sh` from your working directory (the input folder may be at /workspace/input), then get the change in the resulting ./svc repo committed. I left the old loader and config.json there just in case — do whatever is right. Don't push.",
+      "expected_output": "A single commit that switches the service to TOML and, in that same commit, deletes what it replaces: the old JSON loader and config.json. The new loader carries no `_new` suffix (it takes the plain config_loader name, with the import in app.py updated), and the README no longer says settings come from config.json. The message is type(scope): subject, describing that settings now load from config.toml, and flags the change as breaking for anyone relying on config.json.",
+      "assertions": [
+        "Deletes the old JSON loader and config.json in the same commit that introduces the TOML loader",
+        "Leaves no file or module whose name ends in _new, _old, or _v2",
+        "Updates README.md so it no longer says settings come from config.json",
+        "The commit message uses type(scope): subject form and describes settings now loading from config.toml",
+        "Marks the change as breaking (for example with ! after the scope) and says what users must do with an existing config.json"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": ["files/replace-loader"]
+    },
+    {
+      "id": "codebase-git-005",
+      "prompt": "I spotted a one-word typo in our CONTRIBUTING.md. Should I make a branch and open a pull request for it, and what should the commit look like?",
+      "expected_output": "Advice not to open a branch or pull request for a typo: commit it directly, as one small commit typed docs, with a subject describing the corrected text, unless the project requires otherwise.",
+      "assertions": [
+        "Advises against creating a branch for a single typo",
+        "Advises against opening a pull request for it unless the project requires one",
+        "Suggests a single commit typed docs, such as docs: fix ... in CONTRIBUTING"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-006",
+      "prompt": "My feature branch has four commits: add the parser, wire it into the CLI, add tests, update the docs. Each one builds and makes sense by itself, and CI is green. Should I squash-merge or rebase-merge into main?",
+      "expected_output": "Recommends a rebase merge, so the four commits land on main as written and history stays linear; squashing is only for a branch that is a single step anyway. Merging is fine since checks are green.",
+      "assertions": [
+        "Recommends rebase merge for this branch",
+        "Gives the reason that each well-formed commit stays readable and revertible on main, with linear history",
+        "Says squash suits only a branch that is effectively a single step"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-007",
+      "prompt": "I'm adding multi-currency support. It needs a database migration that adds a currency column to the orders table and backfills it, plus the API and UI changes that use it. I expect the whole thing to take about three weeks. Should this be one branch or several, and how would you split it?",
+      "expected_output": "Splits the work: the hard-to-undo schema migration and backfill merge on their own first, and the three-week effort lands in stages, each of which leaves main working, rather than one long-lived branch that drifts from main. It doesn't split the goal into halves that leave main unusable.",
+      "assertions": [
+        "Recommends merging the schema migration and backfill on its own, because it is hard to undo",
+        "Recommends against a single three-week branch because it would drift from main",
+        "Each proposed stage leaves main working and usable; no stage ships half a feature that breaks main"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-008",
+      "prompt": "I'm in a git worktree at ../app-search working on the search feature. Now I need to start a separate bug fix in parallel. I was going to run `git worktree add ./bugfix` right here. Good idea? Walk me through it, including what to do when both are merged.",
+      "expected_output": "Advises against creating the new worktree inside the current one: each change gets its own worktree and branch, placed outside any checkout (for example ../app-bugfix), created from an up-to-date main as a clean baseline rather than from the search branch. After each change merges, remove its worktree and delete its branch.",
+      "assertions": [
+        "Advises against nesting the new worktree inside the current worktree",
+        "Places the new worktree outside the checkout, such as a sibling directory",
+        "Creates the bug-fix branch from an up-to-date main, not from the search branch",
+        "Says to remove each worktree and delete its branch after it merges"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-009",
+      "prompt": "Write the PR description for my branch. What we agreed in the issue: 'Users can export their invoices as CSV. Acceptance: (1) The Invoices page has an Export CSV button. (2) The CSV has one row per invoice with columns date, number, customer, total. (3) Exports over 10,000 rows show an error instead of timing out.' I implemented all three; there's an e2e test for (1) and (2), and I checked (3) by hand with a seeded database. Before this change the Invoices page had no export option at all. Now clicking Export CSV downloads invoices-2026-11.csv, whose first lines are `date,number,customer,total` and `2026-11-03,INV-0412,Acme Ltd,1250.00`; with 12,000 seeded invoices the page shows 'Too many invoices to export (12,000). Narrow the date range and try again.' I did not add PDF export.",
+      "expected_output": "A PR description that says why in a sentence or two, quotes the three acceptance criteria verbatim as a checklist with how each is verified (automated by the e2e test for 1 and 2, manual with the seeded database for 3), lists PDF export as out of scope, shows before and after evidence using what the user reported (no export option before; the downloaded CSV's header and first row, and the over-limit error message, after), and names the merge risk as a two-way door with a small blast radius.",
+      "assertions": [
+        "Quotes the three acceptance criteria verbatim rather than paraphrasing them",
+        "Marks criteria 1 and 2 as verified automatically by the e2e test and criterion 3 as verified manually with the seeded database",
+        "Has a non-empty out-of-scope section that lists PDF export",
+        "Includes an evidence section built from what the user reported: no export option before, and the CSV header and first row plus the over-limit error message after",
+        "States whether the change is easy to roll back (a two-way door) and what could break"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-010",
+      "prompt": "I renamed our CLI's --out flag to --output and removed --out entirely. My draft commit message is 'update cli flags'. Can you write a better one?",
+      "expected_output": "A Conventional Commits message such as `feat(cli)!: rename --out to --output`, whose subject states the new behaviour, marked breaking with `!`, with a body or BREAKING CHANGE footer telling callers to replace --out with --output.",
+      "assertions": [
+        "Uses type(scope): subject form with cli as the scope",
+        "Marks the change as breaking, with ! after the scope or a BREAKING CHANGE footer",
+        "The subject states the new behaviour (the flag is now --output) instead of 'update'",
+        "Tells callers what to do: replace --out with --output"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-011",
+      "prompt": "It's a personal repo, just me, no CI. My branch adds a caching layer, the local check script passes and I've reviewed the diff myself. Do I need to open a pull request to get it into main?",
+      "expected_output": "No pull request is needed: rebase the branch onto main locally and push, recording the passing check as evidence in the commit body. A pull request earns its place only with remote-only CI, reviewing collaborators, or a record someone will look for.",
+      "assertions": [
+        "Says a pull request isn't needed in this situation",
+        "Suggests rebasing the branch onto main locally and pushing",
+        "Suggests recording the evidence (the passing check) in the commit body",
+        "Names when a pull request would be worth it, such as remote-only CI, collaborators who review, or a record others will look for"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-012",
+      "prompt": "I replaced our hand-rolled retry loop in the HTTP client with a backoff helper. To be safe I renamed the old function to retry_old() and commented out its call sites rather than deleting them. Is that OK to commit like this?",
+      "expected_output": "No: the commit that introduces the backoff helper should delete the old retry loop and its commented-out call sites, with no `_old` copy or commented-out code; git history keeps the old version if it's needed. If both really must coexist for a while, say when the old one goes.",
+      "assertions": [
+        "Advises deleting retry_old() in the same commit that adds the backoff helper",
+        "Advises removing the commented-out call sites rather than committing them",
+        "Points out that git history already preserves the old code"
+      ],
+      "expected_skill": "codebase-git",
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-neg-001",
+      "prompt": "Write a Python function that removes duplicates from a list while keeping the original order, with a couple of doctest examples.",
+      "expected_output": "A Python function that deduplicates a list preserving first-seen order (for example with a seen set or dict.fromkeys), with doctest examples that pass.",
+      "assertions": [
+        "Provides a function that removes duplicates and keeps first-seen order",
+        "Includes at least two doctest examples that would pass"
+      ],
+      "expected_skill": null,
+      "expected_script": null,
+      "files": []
+    },
+    {
+      "id": "codebase-git-neg-002",
+      "prompt": "Explain the difference between a Python list and a tuple, and when I'd pick each.",
+      "expected_output": "Explains that lists are mutable and tuples immutable (and hashable when their items are), with guidance on when to use each, such as tuples for fixed records and dict keys and lists for collections that change.",
+      "assertions": [
+        "States that lists are mutable and tuples are immutable",
+        "Gives at least one concrete situation for choosing each"
+      ],
+      "expected_skill": null,
+      "expected_script": null,
+      "files": []
+    }
+  ]
+}
