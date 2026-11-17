@@ -3,6 +3,8 @@ name: research
 description: Investigate a question against high-trust primary sources and report the findings with sources. Use when the user wants a topic researched, docs or API facts gathered, or reading legwork delegated to a background agent.
 ---
 
+# Research
+
 Spin up a **background agent** to do the research, so you keep working while it reads. Start it with a fresh context window.
 
 Its job:

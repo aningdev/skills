@@ -9,7 +9,8 @@
 
 ## 命令
 
-- `make check`：用 [skills-ref](references/agentskills/skills-ref/README.md) 按 Agent Skills 规范校验 `skills/` 下每个技能（frontmatter 走严格 YAML，冒号等问题会在这里报出）。首次使用先 `git submodule update --init references/agentskills`。改完技能先跑它。
+- `make check`：用 [skills-ref](references/agentskills/skills-ref/README.md) 按 Agent Skills 规范校验 `skills/` 下每个技能（frontmatter 走严格 YAML，冒号等问题会在这里报出）。首次使用先 `git submodule update --init references/agentskills references/skillevaluator`。改完技能先跑它。
+- `make eval`：跑 [SkillEvaluator](references/skillevaluator/README.md) 完整 Tier 1（含 SkillSpector 安全扫描，约 1 分钟），只出报告不拦截；`make check` 已含它的轻量部分（跳过 security、code-integrity）。已知误报写在 Makefile 注释里。
 - `make fix`：自动修 lint，并用 ruff 格式化 Python、用 oxfmt 格式化 Markdown/JSON（会改文件，跑完看一眼 diff）。
 
 ## 何时读什么

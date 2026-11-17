@@ -3,6 +3,8 @@ name: handoff
 description: Compact the current conversation or task into a handoff document for another agent to pick up.
 ---
 
+# Handoff
+
 Write a handoff document summarising the current conversation or task so a fresh agent can continue the work. Shape it around what the next session will be used for; if the user hasn't said, ask. Save to the temporary directory of the user's OS (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) - not the current workspace.
 
 Include a "suggested skills" section in the document, naming which skills the next agent should call the Skill tool for.

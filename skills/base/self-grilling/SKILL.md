@@ -3,6 +3,8 @@ name: self-grilling
 description: Grill yourself about your own decisions under a mission, writing each call out, and bring the user only what's outside it or hard to undo. Use once you've read enough to commit to an approach, whenever you pick between ways, assume what nothing settled, depart from what was agreed, add what nobody asked for, or fail at the same thing twice, and before you hand off.
 ---
 
+# Self-Grilling
+
 Run `grilling` on yourself, with a **mission** as the yardstick: the role's mission, or else one sentence distilled from the request. Write each call out as you settle it, at three points:
 
 - Once you've read what you need, before you commit to an approach: list the calls this work needs and answer each.

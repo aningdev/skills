@@ -10,3 +10,6 @@
 [submodule "references/agentskills"]
 	path = references/agentskills
 	url = https://github.com/agentskills/agentskills.git
+[submodule "references/skillevaluator"]
+	path = references/skillevaluator
+	url = https://github.com/NVIDIA/SkillEvaluator.git
