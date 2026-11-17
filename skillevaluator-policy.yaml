@@ -1,0 +1,5 @@
+# Overlay on SkillEvaluator's default policy. PyPI 0.9.0 fails every skill without metadata.author; upstream main
+# already makes it advisory (low), which is all the Agent Skills spec asks. Drop this file once a release catches up.
+profile: default
+severity_overrides:
+  SCHEMA.author_missing: low

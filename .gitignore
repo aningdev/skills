@@ -16,3 +16,6 @@ __pycache__
 .ruff_cache
 .ropeproject
 */output/
+
+# SkillEvaluator Tier 3 run output
+skills/**/evals/results/
