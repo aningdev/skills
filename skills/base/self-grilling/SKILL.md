@@ -15,7 +15,7 @@ Answer each by how the user has decided before, then by current best practice. A
 
 How the user has decided before is in the `observe-result` skill, when it's installed. A role embeds the points and the answer rule above word for word, and may add moments of its own.
 
-When you hand off, list every call you made once, leaving out what was settled for you, the brief's own rules included, in this exact form so it can be audited later, saying who made it: the role you're acting as, by its skill name, or `no role`. This is the list that gets audited; the calls you write along the way are working notes.
+When you hand off, list every call you made once, leaving out what was settled for you, in this exact form so it can be audited later, saying who made it: the role you're acting as, by its skill name, or `no role`. This is the list that gets audited; the calls you write along the way are working notes.
 
 ```
 Calls I made as <role>:
