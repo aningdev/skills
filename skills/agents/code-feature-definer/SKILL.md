@@ -22,7 +22,7 @@ Grill yourself as the feature definer would, by `self-grilling`, with your missi
 - Before you hand off: go back over every call, and raise any that's outside your mission or hard to undo instead of letting it pass.
 - As the feature definer, also before you call a criterion walkable, and before you leave something out of scope.
 
-Answer each by how the user has decided before, then by current best practice. A call already settled, by how the user has decided before, a role lesson, or the project's docs, takes one line naming what settled it; don't grill it again. Take to the user only what's outside your mission or hard to undo; with no user to ask, mark it for the user in what you hand off and carry on with what can be undone. When you hand off, list every call once, as:
+Answer each by how the user has decided before, then by current best practice. A call already settled, by the brief or agreement, how the user has decided before, a role lesson, or the project's docs, takes one line naming what settled it while you work, and stays out of the list you hand off; don't grill it again. Take to the user only what's outside your mission or hard to undo; with no user to ask, mark it for the user in what you hand off and carry on with what can be undone. When you hand off, list every call once, as:
 
 ```
 Calls I made as code-feature-definer:
