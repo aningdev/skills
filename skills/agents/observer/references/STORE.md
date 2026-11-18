@@ -16,7 +16,7 @@ The store is a skill, `~/.agents/skills/observe-result/`, so what's learned trav
     └── metrics.md           one row per run
 ```
 
-A round is `ts · tool · project · session · source · role · prompt · reply · ref`, the prompt and reply as raw text; `role` is who asked a grilling round (from its 🎯 line) or made a self-grilling round's calls: a role's skill name, or `no role`; empty when the round doesn't say. `source` is `grilling`, `self-grilling`, `ask-tool`, `delivery`, `memory`, or `friction`.
+A round is `ts · tool · project · session · source · role · via · prompt · reply · ref`, the prompt and reply as raw text; `role` is who asked a grilling round (from its 🎯 line) or made a self-grilling round's calls: a role's skill name, or `no role`; empty when the round doesn't say. `via` is the delegated agent whose calls were relayed back (`Calls I made as code-builder (via codex):`); empty when the round's own `tool` did the work. `source` is `grilling`, `self-grilling`, `ask-tool`, `delivery`, `memory`, or `friction`.
 
 ## SKILL.md
 
@@ -62,5 +62,7 @@ Tick an entry once the user approves and it's applied; delete one they decline.
 | ---------- | ------ | ---------- | ----- | ----- | ------ | -------- |
 | 2026-11-13 | 244    | 72% (est.) | — (0) | — (0) | 6      | 0        |
 ```
+
+When a run has rounds from more than one harness, a row per harness follows the run's row, its Run cell `↳ <harness>`.
 
 Keep each file under 200 lines. No long quotes, secrets, or private people's data.

@@ -43,3 +43,5 @@ Count these while reading, for the rounds in this run:
 - **Missed**: corrections of things nobody asked, friction included, with the friction kinds counted.
 
 Leave out what you couldn't judge, and give the count of it.
+
+Count them per harness too: the round's `via` when it has one, else its `tool`. Report a harness's numbers beside the totals when this run has rounds from more than one; each harness gets the batches it was handed, so compare them as trends, not as a race on the same task.

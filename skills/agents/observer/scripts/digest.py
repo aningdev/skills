@@ -12,7 +12,7 @@ user's reply, kept as raw text. A turn in which the agent changed files is a rou
 source `delivery`: the agent's closing words and whatever the user said next, since that's
 where corrections of delivered work show up. Nothing is judged here: the observer reads the rounds and
 goes back to the session through `ref` when it needs more. Each agent tool has a reader
-in READERS (Claude Code, pi, Codex, grok, dsh); add one to support another tool.
+in READERS (Claude Code, pi, Codex, grok, dsh, opencode); add one to support another tool.
 
 Feedback the agents already distilled during a session, Claude Code's per-project
 memory files of type `feedback`, is copied too, as rounds with source `memory`, so the
@@ -44,7 +44,9 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 lazy import argparse
+lazy import sqlite3
 lazy from compression import zstd
+lazy from contextlib import closing
 
 HOME = Path.home()
 STORE = HOME / ".agents" / "skills" / "observe-result" / ".observer"
@@ -116,14 +118,32 @@ def open_log(path: Path) -> io.BufferedIOBase:
     return path.open("rb")
 
 
+def in_db(path: Path) -> bool:
+    """Whether a path stands for one session inside a database (opencode) rather than a log file."""
+    return path.parent.suffix == ".db"
+
+
+def open_db(path: Path) -> sqlite3.Connection:
+    """Open the database a session path points into, read-only."""
+    return sqlite3.connect(f"file:{path.parent}?mode=ro", uri=True)
+
+
 def log_size(path: Path) -> int:
     """The length of a session log's content, where reading resumes once it's all read."""
+    if in_db(path):  # a session in a database resumes at its next message number
+        with closing(open_db(path)) as db:
+            return db.execute(
+                "select coalesce(max(seq) + 1, 0) from session_message where session_id = ?",
+                (path.name,),
+            ).fetchone()[0]
     with open_log(path) as f:
         return f.seek(0, io.SEEK_END)
 
 
 def session_id(path: Path) -> str:
     """The short id of the session a log belongs to, from the last uuid in its path."""
+    if in_db(path):
+        return path.name[-8:]
     ids = re.findall(r"[0-9a-f]{8}-[0-9a-f]{4}-", str(path))
     return ids[-1][:8] if ids else path.stem[:8]
 
@@ -321,6 +341,70 @@ def read_dsh(path: Path, offset: int) -> Iterator[Event]:
                 )
 
 
+def read_opencode(path: Path, offset: int) -> Iterator[Event]:
+    """Read an opencode session: the user's words, AI text, edits, and question answers. A child session, or one opened with a brief, is marked 'agent'."""
+    with closing(open_db(path)) as db:
+        cwd, parent = db.execute(
+            "select directory, parent_id from session_v2 where id = ?", (path.name,)
+        ).fetchone()
+        first = db.execute(
+            "select data from session_message where session_id = ? and type = 'user' order by seq limit 1",
+            (path.name,),
+        ).fetchone()
+        rows = db.execute(
+            "select seq, type, id, data from session_message where session_id = ? and seq >= ? order by seq",
+            (path.name, offset),
+        ).fetchall()
+    if parent or (
+        first
+        and re.search(
+            r"BRIEF|\.handoff/|handoff|交接", json.loads(first[0]).get("text", "")
+        )
+    ):
+        yield Event(0, "agent", "", "", cwd, "")
+        return
+    for seq, kind, ref, data in rows:
+        d = json.loads(data)
+        created = (d.get("time") or {}).get("created", 0)
+        ts = datetime.fromtimestamp(created / 1000, UTC).isoformat()
+        if kind == "user" and (text := d.get("text", "").strip()):
+            yield Event(seq, "user", text, ts, cwd, ref)
+        elif kind == "assistant":
+            if text := text_of(d.get("content"), "text"):
+                yield Event(seq, "assistant", text, ts, cwd, ref)
+            for b in d.get("content") or []:
+                if b.get("type") != "tool":
+                    continue
+                if b.get("name") in EDITS:
+                    yield Event(seq, "edit", "", ts, cwd, ref)
+                elif b.get("name") == "question":
+                    state = b.get("state") or {}
+                    answer = {
+                        "questions": (state.get("input") or {}).get("questions"),
+                        "answers": text_of(state.get("content"), "text"),
+                    }
+                    yield Event(
+                        seq, "ask", json.dumps(answer, ensure_ascii=False), ts, cwd, ref
+                    )
+
+
+def session_logs(root: Path, pattern: str) -> list[Path]:
+    """Each session log under `root`; an opencode database stands for one path per session in it."""
+    paths: list[Path] = []
+    for path in sorted(root.glob(pattern)):
+        if path.suffix != ".db":
+            paths.append(path)
+            continue
+        with closing(sqlite3.connect(f"file:{path}?mode=ro", uri=True)) as db:
+            paths += [
+                path / sid
+                for (sid,) in db.execute(
+                    "select id from session_v2 order by time_created"
+                )
+            ]
+    return paths
+
+
 type Reader = Callable[[Path, int], Iterator[Event]]
 # per tool: where its sessions live, which files are session logs, and how to read one
 READERS: frozendict[str, tuple[Path, str, Reader]] = frozendict(
@@ -329,6 +413,7 @@ READERS: frozendict[str, tuple[Path, str, Reader]] = frozendict(
     codex=(HOME / ".codex" / "sessions", "**/*.jsonl", read_codex),
     grok=(HOME / ".grok" / "sessions", "*/*/chat_history.jsonl", read_grok),
     dsh=(HOME / ".dsh" / "sessions", "*/*/session.v3.jsonl.zstd", read_dsh),
+    opencode=(HOME / ".local" / "share" / "opencode", "opencode.db", read_opencode),
 )
 
 
@@ -353,6 +438,7 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
             "project": e.cwd,
             "session": session_id(path),
             "role": "",
+            "via": "",
             "ref": f"{path}#{e.ref}",
         }
         if e.kind == "ask":
@@ -367,10 +453,13 @@ def extract(tool: str, path: Path, offset: int) -> tuple[list[dict], int, bool]:
         for source, marker in MARKERS.items():
             if found := find_marker(marker, said):
                 at = found.start()
+                # a list relayed from a delegated agent names it: `as code-builder (via codex)`
+                role, _, via = (found.group(1) or "").strip().partition(" (via ")
                 open_round = {
                     **base,
                     "source": source,
-                    "role": (found.group(1) or "").strip(),  # who asked, or who decided
+                    "role": role,  # who asked, or who decided
+                    "via": via.removesuffix(")"),
                     "prompt": said[at:][:LIMIT],
                     "reply": e.text[:LIMIT],
                     "ref": f"{path}#{turn[-1].ref}",
@@ -425,6 +514,7 @@ def read_memories() -> Iterator[dict]:
             "project": path.parent.parent.name,
             "session": "",
             "role": "",
+            "via": "",
             "ref": str(path),
             "source": "memory",
             "prompt": f"{fields.get('name', '')}: {fields.get('description', '')}",
@@ -451,6 +541,7 @@ def read_facets() -> Iterator[dict]:
             "project": meta.get("project_path", ""),
             "session": facet.get("session_id", path.stem)[:8],
             "role": "",
+            "via": "",
             "ref": str(path),
             "source": "friction",
             "prompt": f"{facet.get('underlying_goal', '')} [{kinds}]",
@@ -509,8 +600,9 @@ def main() -> int:
     )  # fingerprints of rounds already taken, to drop forked copies
     found: list[dict] = []
     for tool, (root, pattern, _) in READERS.items():
-        for path in sorted(root.glob(pattern)):
-            seen, size = state.get(str(path), {}), path.stat().st_size
+        for path in session_logs(root, pattern):
+            seen = state.get(str(path), {})
+            size = log_size(path) if in_db(path) else path.stat().st_size
             if seen.get("agent") or seen.get("size", seen.get("offset", 0)) >= size:
                 continue  # run by an agent, or nothing written since last time
             rounds, end, by_agent = extract(tool, path, seen.get("offset", 0))
