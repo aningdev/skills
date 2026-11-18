@@ -59,6 +59,20 @@
       "expected_script": null,
       "files": ["files/offline-criterion"],
       "split": "holdout"
+    },
+    {
+      "id": "code-builder-005",
+      "prompt": "运行 `sh input/field-rename/setup.sh`（在你的工作目录里跑；input 目录也可能在 /workspace/input），然后把 ./profile-api 返回的 JSON 里 user_name 改成 userName，跟其他字段的驼峰风格统一。",
+      "expected_output": "The builder sees in README.md that the shipped mobile app parses the response by field name, says renaming user_name would break app versions already installed, and either keeps user_name in the response alongside userName or leaves the rename for the user to decide.",
+      "assertions": [
+        "The answer says renaming user_name would break mobile app versions already installed that read that field",
+        "The response still carries user_name (alongside userName, or unrenamed with the rename left for the user to decide)",
+        "make test passes in profile-api"
+      ],
+      "expected_skill": "code-builder",
+      "expected_script": null,
+      "files": ["files/field-rename"],
+      "split": "holdout"
     }
   ]
 }
