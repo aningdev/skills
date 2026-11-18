@@ -5,13 +5,11 @@ description: Compact the current conversation or task into a handoff document fo
 
 # Handoff
 
-Write a handoff document summarising the current conversation or task so a fresh agent can continue the work. Shape it around what the next session will be used for; if the user hasn't said, ask. Save to the temporary directory of the user's OS (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) - not the current workspace.
+Write a handoff document summarising the current conversation or task so a fresh agent can continue the work. Shape it around what the next session will be used for; if the user hasn't said, ask, and with no one to ask, state at the top what you assumed it's for, marked for the user to confirm. Save to the temporary directory of the user's OS (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) - not the current workspace.
 
 Include a "suggested skills" section in the document, naming which skills the next agent should call the Skill tool for.
 
-Do not duplicate content already captured in other artifacts (docs, plans, issues, commits, diffs). Reference them by path or URL instead.
-
-Carry acceptance criteria verbatim: never summarise them.
+Carry acceptance criteria verbatim, even when another artifact already holds them: never summarise them. Everything else already captured in other artifacts (docs, plans, issues, commits, diffs), don't duplicate; reference it by path or URL instead, written so it resolves from where the receiver starts work, or absolute.
 
 Whoever picks it up, a delegate, a peer, or a later you, should be able to work without coming back to ask:
 
