@@ -31,7 +31,8 @@
       ],
       "expected_skill": "codebase-git",
       "expected_script": null,
-      "files": ["files/mixed-changes"]
+      "files": ["files/mixed-changes"],
+      "split": "dev"
     },
     {
       "id": "codebase-git-003",
@@ -45,7 +46,8 @@
       ],
       "expected_skill": "codebase-git",
       "expected_script": null,
-      "files": ["files/zh-history"]
+      "files": ["files/zh-history"],
+      "split": "holdout"
     },
     {
       "id": "codebase-git-004",
@@ -60,7 +62,8 @@
       ],
       "expected_skill": "codebase-git",
       "expected_script": null,
-      "files": ["files/replace-loader"]
+      "files": ["files/replace-loader"],
+      "split": "dev"
     },
     {
       "id": "codebase-git-005",
@@ -142,7 +145,8 @@
       ],
       "expected_skill": "codebase-git",
       "expected_script": null,
-      "files": []
+      "files": [],
+      "split": "holdout"
     },
     {
       "id": "codebase-git-011",

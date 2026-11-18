@@ -21,3 +21,9 @@ __pycache__
 
 # SkillEvaluator Tier 3 run output
 skills/**/evals/results/
+
+# darwin-skill test sets, generated from evals/evals.json by scripts/darwin_tests.py
+skills/**/test-prompts.json
+
+# darwin-skill run log
+.agents/skills/darwin-skill/results.tsv
