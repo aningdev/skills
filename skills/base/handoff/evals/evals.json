@@ -1,0 +1,66 @@
+{
+  "skill_name": "handoff",
+  "evals": [
+    {
+      "id": "handoff-001",
+      "prompt": "运行 `sh input/llms-gap/setup.sh`（在你的工作目录里跑；input 目录也可能在 /workspace/input），然后写个交接，让 pi 把 ./ui-kit/llms.txt 里缺的组件补齐。验收标准：1. llms.txt 列出 components/ 下的每个组件；2. 每条都有一句话说明用途；3. `make check` 通过。",
+      "expected_output": "A handoff document written outside the ui-kit repo that carries the three criteria word for word, spells out the llms.txt line format and order from AGENTS.md, says where the result goes back, and asks for the Calls list in it.",
+      "assertions": [
+        "A handoff file was written, and it is not inside the ui-kit repo",
+        "All three acceptance criteria appear in the handoff word for word",
+        "The handoff spells out the llms.txt line format (`- [Name](components/Name.tsx): ...`) rather than only pointing at AGENTS.md",
+        "The handoff says where the result goes back (a file, a branch, or who to reply to)",
+        "The handoff asks for a `Calls I made as <role>:` list in the result"
+      ],
+      "expected_skill": "handoff",
+      "expected_script": null,
+      "files": ["files/llms-gap"],
+      "split": "dev"
+    },
+    {
+      "id": "handoff-002",
+      "prompt": "运行 `sh input/specs-exist/setup.sh`（在你的工作目录里跑；input 目录也可能在 /workspace/input），我们刚把 ./shop 的搜索功能定下来了，写个交接给另一个代理去实现。",
+      "expected_output": "A handoff that points at docs/specs/search.md by path instead of copying its background and design notes, spells out the rule that core must not import from adapters, says where the result goes back, and asks for the Calls list.",
+      "assertions": [
+        "The handoff refers to docs/specs/search.md by path",
+        "The handoff does not copy the spec's Background section (for example the sentence about the March funnel review)",
+        "The handoff spells out that shop/core/ must not import from shop/adapters/",
+        "The handoff says where the result goes back and asks for a `Calls I made as <role>:` list in it"
+      ],
+      "expected_skill": "handoff",
+      "expected_script": null,
+      "files": ["files/specs-exist"],
+      "split": "dev"
+    },
+    {
+      "id": "handoff-003",
+      "prompt": "运行 `sh input/session-notes/setup.sh`（在你的工作目录里跑；input 目录也可能在 /workspace/input），./weather-bot 这个项目今天的上下文快满了，整理一下，我明天开新会话接着做。",
+      "expected_output": "A handoff for tomorrow's session that keeps the API key out, carries all four unfinished items and today's fuzzy-matching blocker, refers to notes.md by path, and says where to start.",
+      "assertions": [
+        "The handoff does not contain the string fixture-key-7731-do-not-copy",
+        "All four unfinished items from notes.md appear in the handoff",
+        "The handoff mentions the fuzzy-matching blocker (广州 matching 广州塔)",
+        "The handoff refers to notes.md by path"
+      ],
+      "expected_skill": "handoff",
+      "expected_script": null,
+      "files": ["files/session-notes"],
+      "split": "holdout"
+    },
+    {
+      "id": "handoff-004",
+      "prompt": "运行 `sh input/hand-back/setup.sh`（在你的工作目录里跑；input 目录也可能在 /workspace/input），你是被派来做 ./pdf-tool 的执行者，活已经做完了，过程记在 WORKLOG.md。按 HANDOFF.md 写总结交回。",
+      "expected_output": "pdf-tool/RESULT.md hands the result back: what was built, the evidence, what isn't met (the unit test has no real assertion), and a plain top-level `Calls I made as code-builder:` list covering the pypdf choice, the output name, and leaving encrypted PDFs out, with the last marked for the orchestrator or user.",
+      "assertions": [
+        "pdf-tool/RESULT.md exists",
+        "RESULT.md has a line starting `Calls I made as`, as plain top-level text, not inside a code block or quote",
+        "The Calls list covers the three decisions in WORKLOG.md: choosing pypdf, the output file name, and leaving encrypted PDFs out",
+        "RESULT.md says plainly that criterion 2 is not really met, since test_merge.py has no real assertion"
+      ],
+      "expected_skill": "handoff",
+      "expected_script": null,
+      "files": ["files/hand-back"],
+      "split": "holdout"
+    }
+  ]
+}
