@@ -93,9 +93,11 @@ NOISE = (
     "Base directory for this skill",
     "This session is being continued from a previous conversation",
 )
-# a session started by handing it a brief, as a file or as a skill command over one, is run by an agent
+# a session started by handing it a brief is run by an agent: as a file, as a skill command over one,
+# or as a line pointing at a BRIEF.md, or at a handoff file with the delegation rule "do not delegate"
 BRIEFED = re.compile(
-    r"<file name=|^<skill name=[\s\S]*(?:BRIEF|\.handoff/|handoff|交接)"
+    r"<file name=|^<skill name=[\s\S]*(?:BRIEF|\.handoff/|handoff|交接)|BRIEF\.md"
+    r"|(?:\.handoff/|HANDOFF)[^\n]*(?:[Dd]o not delegate|不得再?委派)"
 )
 
 
@@ -248,7 +250,7 @@ def read_pi(path: Path, offset: int) -> Iterator[Event]:
 
 
 def read_codex(path: Path, offset: int) -> Iterator[Event]:
-    """Read a Codex session: the user's words without injected context, AI text, patches, and request_user_input answers."""
+    """Read a Codex session: the user's words without injected context, AI text, patches, and request_user_input answers. A brief handed over by another agent is marked 'agent'."""
     cwd = (next(read_jsonl(path, 0), (0, {}))[1].get("payload") or {}).get("cwd", "")
     asks: dict[str, str] = {}
     for i, d in read_jsonl(path, offset):
@@ -259,7 +261,8 @@ def read_codex(path: Path, offset: int) -> Iterator[Event]:
         if kind == "message" and p.get("role") == "user":
             text = text_of(p.get("content"), "input_text")
             if text and not text.startswith(INJECTED):
-                yield Event(i, "user", text, ts, cwd, ref)
+                kind = "agent" if BRIEFED.search(text) else "user"
+                yield Event(i, kind, text, ts, cwd, ref)
         elif kind == "message" and p.get("role") == "assistant":
             if text := text_of(p.get("content"), "output_text"):
                 yield Event(i, "assistant", text, ts, cwd, ref)
